@@ -2,7 +2,7 @@
 
 local spawned_list = {}
 
-
+local name_examples = {"oakenreef", "BlazeHedgehog", "bestfriendmothman"}
 local text_examples = {"test", "hello", "hi"}
 
 local spawn_badnik = function(player)
@@ -16,7 +16,9 @@ local spawn_badnik = function(player)
 
 	local spawned = P_SpawnMobjFromMobj(player.mo, x+xr, y+yr, 50*FRACUNIT, MT_BLUECRAWLA)
 
-	spawned.chat_text = text_examples[ P_RandomRange( 1, #text_examples ) ]
+	spawned.chat = {}
+	spawned.chat.name = name_examples[ P_RandomRange( 1, #name_examples ) ]
+	spawned.chat.text = text_examples[ P_RandomRange( 1, #text_examples ) ]
 	table.insert(spawned_list, spawned)
 end
 
@@ -71,7 +73,8 @@ hud.add( function(v, player, camera)
 
 			local hpos = 160 - angle*320/90
 			local vpos = 100 + vangle*200/56 --this works for first person, not third
-			v.drawString(hpos, vpos, b.chat_text, V_YELLOWMAP|V_SNAPTOLEFT|V_SNAPTOTOP, "thin")
+			v.drawString(hpos, vpos-8, b.chat.name, V_YELLOWMAP|V_SNAPTOLEFT|V_SNAPTOTOP, "thin")
+			v.drawString(hpos, vpos, b.chat.text, V_SNAPTOLEFT|V_SNAPTOTOP, "thin")
 		end
 	end
 end, "game")
