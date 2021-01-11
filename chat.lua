@@ -61,7 +61,7 @@ hud.add( function(v, player, camera)
 			local h = FixedHypot(cam.x-b.x, cam.y-b.y)
 			--local vang1 = R_PointToAngle2(cam.z, b.z, 0, h) - ANGLE_90
 
-			local vangle = player.aiming --+ vang1
+			local vangle = first_person and player.aiming or cam.aiming or 0 --+ vang1
 			vangle = AngleFixed($1)
 
 			vangle = $1
