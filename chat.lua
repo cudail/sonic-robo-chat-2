@@ -75,14 +75,12 @@ hud.add( function(v, player, camera)
 			local vpos = 100 + vangle*200/56 --this works for first person, not third
 
 			local nameflags = V_YELLOWMAP|V_SNAPTOLEFT|V_SNAPTOTOP
-			local namefont = "thin"
-			local namewidth =  v.stringWidth(b.chat.name, nameflags, namefont)
-			v.drawString(hpos-namewidth/2, vpos-8, b.chat.name, nameflags, namefont)
+			local namefont = "thin-center"
+			v.drawString(hpos, vpos-8, b.chat.name, nameflags, namefont)
 
 			local textflags = V_SNAPTOLEFT|V_SNAPTOTOP
-			local textfont = "thin"
-			local textwidth =  v.stringWidth(b.chat.text, textflags, textfont)
-			v.drawString(hpos-textwidth/2, vpos, b.chat.text, textflags, textfont)
+			local textfont = "thin-center"
+			v.drawString(hpos, vpos, b.chat.text, textflags, textfont)
 		end
 	end
 end, "game")
