@@ -40,7 +40,7 @@ end)
 
 hud.add( function(v, player, camera)
 	for i, b in pairs(spawned_list) do
-		local first_person = false --need to figure out a way to check this
+		local first_person = not camera.chase
 		local cam = first_person and player.mo or camera
 		if b.valid then
 			local ang1 = R_PointToAngle2(cam.x, cam.y, b.x, b.y)
@@ -64,7 +64,7 @@ hud.add( function(v, player, camera)
 				vangle = $1-360
 			end
 
-			print(AngleFixed(vang1)/FRACUNIT)
+			--print(AngleFixed(vang1)/FRACUNIT)
 
 			local hpos = 160 - angle*320/90
 			local vpos = 100 + vangle*200/56 --this works for first person, not third
