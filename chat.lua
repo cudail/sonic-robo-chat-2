@@ -50,10 +50,10 @@ hud.add( function(v, player, camera)
 		if b.valid then
 			local ang1 = R_PointToAngle2(cam.x, cam.y, b.x, b.y)
 			local angle = ang1 - cam.angle
-			angle = AngleFixed($1)/FRACUNIT
+			angle = AngleFixed($1)
 			--print(angle)
-			if angle > 180 then
-				angle = $1-360
+			if angle > 180*FRACUNIT then
+				angle = $1-360*FRACUNIT
 			end
 
 
@@ -64,22 +64,20 @@ hud.add( function(v, player, camera)
 			local vangle = player.aiming --+ vang1
 			vangle = AngleFixed($1)
 
-			vangle = $1/FRACUNIT
-			if vangle > 180 then
-				vangle = $1-360
+			vangle = $1
+			if vangle > 180*FRACUNIT then
+				vangle = $1-360*FRACUNIT
 			end
 
-			--print(AngleFixed(vang1)/FRACUNIT)
-
-			local hpos = 160 - angle*320/90
-			local vpos = 100 + vangle*200/56 --this works for first person, not third
+			local hpos = 160*FRACUNIT - FixedDiv(FixedMul(angle,320*FRACUNIT), 90*FRACUNIT)
+			local vpos = 100*FRACUNIT + FixedDiv(FixedMul(vangle,200*FRACUNIT), 56*FRACUNIT)
 
 			local nameflags = V_YELLOWMAP|V_SNAPTOLEFT|V_SNAPTOTOP
-			local namefont = "thin-center"
-			v.drawString(hpos, vpos-8, b.chat.name, nameflags, namefont)
+			local namefont = "thin-fixed-center"
+			v.drawString(hpos, vpos-8*FRACUNIT, b.chat.name, nameflags, namefont)
 
 			local textflags = V_SNAPTOLEFT|V_SNAPTOTOP
-			local textfont = "thin-center"
+			local textfont = "thin-fixed-center"
 			v.drawString(hpos, vpos, b.chat.text, textflags, textfont)
 		end
 	end
