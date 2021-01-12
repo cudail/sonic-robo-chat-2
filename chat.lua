@@ -1,9 +1,37 @@
 
 
+local badnik_list = {
+	greenflower =  { MT_BLUECRAWLA, MT_REDCRAWLA, MT_GFZFISH},
+	technohill = { MT_GOLDBUZZ, MT_REDBUZZ, MT_DETON, MT_SPRINGSHELL },
+	deepsea = { MT_SKIM, MT_JETJAW, MT_CRUSHSTACEAN  },
+	castleeggman = {MT_ROBOHOOD, MT_FACESTABBER, MT_EGGGUARD},
+	aridcanyon = {MT_VULTURE, MT_GSNAPPER, MT_MINUS, MT_CANARIVORE},
+	redvolcano = {MT_UNIDUS, MT_PTERABYTE, MT_PYREFLY, MT_DRAGONBOMBER},
+	eggrock = {MT_JETTBOMBER, MT_JETTGUNNER, MT_POPUPTURRET, MT_SPINCUSHION, MT_SNAILER}
+}
+
+local level_list = {
+	"greenflower", "greenflower", "greenflower",
+	"technohill", "technohill", "technohill",
+	"deepsea", "deepsea", "deepsea",
+	"castleeggman", "castleeggman", "castleeggman",
+	"aridcanyon", "aridcanyon", "aridcanyon",
+	"redvolcano"
+}
+
+level_list[22] = "eggrock"
+level_list[23] = "eggrock"
+level_list[23] = "eggrock"
+
 local spawned_list = {}
 
 local name_examples = {"oakenreef", "BlazeHedgehog", "bestfriendmothman"}
 local text_examples = {"test", "hello", "hi"}
+
+
+local rand = function(list)
+	return list[ P_RandomRange(1, #list) ]
+end
 
 local spawn_badnik = function(player)
 	local dist = 300*FRACUNIT
@@ -14,7 +42,14 @@ local spawn_badnik = function(player)
 	local xr = FixedMul(P_RandomFixed(), rrange)-rrange/2
 	local yr = FixedMul(P_RandomFixed(), rrange)-rrange/2
 
-	local spawned = P_SpawnMobjFromMobj(player.mo, x+xr, y+yr, 50*FRACUNIT, MT_BLUECRAWLA)
+	local levelname = level_list[gamemap]
+	local badnik = MT_PENGUINATOR
+	if levelname then
+		local level = badnik_list[levelname]
+		badnik = rand(level)
+	end
+
+	local spawned = P_SpawnMobjFromMobj(player.mo, x+xr, y+yr, 50*FRACUNIT, badnik)
 
 	spawned.chat = {}
 	spawned.chat.name = name_examples[ P_RandomRange( 1, #name_examples ) ]
