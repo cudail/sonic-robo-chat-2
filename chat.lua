@@ -44,18 +44,29 @@ end)
 
 
 hud.add( function(v, player, camera)
-	for i, b in pairs(spawned_list) do
-		local first_person = not camera.chase
-		local cam = first_person and player.mo or camera
-		if b.valid then
-			local ang1 = R_PointToAngle2(cam.x, cam.y, b.x, b.y)
-			local angle = ang1 - cam.angle
-			angle = AngleFixed($1)
-			--print(angle)
-			if angle > 180*FRACUNIT then
-				angle = $1-360*FRACUNIT
-			end
+	local first_person = not camera.chase
+	local cam = first_person and player.mo or camera
+	local hudwidth = 320*FRACUNIT
+	local hudheight = (320*v.height()/v.width())*FRACUNIT
 
+	local fov = ANGLE_90 -- Can this be fetched live instead of assumed?
+
+	local distance = FixedDiv(hudwidth / 2, tan(fov/2)) -- the "distance" the HUD plane is projected from the player
+
+	for i, b in pairs(spawned_list) do
+		if b.valid then
+			local hangdiff = R_PointToAngle2(cam.x, cam.y, b.x, b.y) --Angle between camera vector and object
+			local hangle = hangdiff - cam.angle
+
+			--check if object is outside of our field of view
+			--converting to fixed just to normalise things
+			--e.g. this will convert 365° to 5° for us
+			local fhanlge = AngleFixed(hangle)
+			local fhfov = AngleFixed(fov/2)
+			local f360 = AngleFixed(ANGLE_MAX)
+			if fhanlge < f360 - fhfov and fhanlge > fhfov then
+				continue
+			end
 
 
 			local h = FixedHypot(cam.x-b.x, cam.y-b.y)
@@ -69,7 +80,7 @@ hud.add( function(v, player, camera)
 				vangle = $1-360*FRACUNIT
 			end
 
-			local hpos = 160*FRACUNIT - FixedDiv(FixedMul(angle,320*FRACUNIT), 90*FRACUNIT)
+			local hpos = hudwidth/2 - FixedMul(distance, tan(hangle))
 			local vpos = 100*FRACUNIT + FixedDiv(FixedMul(vangle,200*FRACUNIT), 56*FRACUNIT)
 
 			local nameflags = V_YELLOWMAP|V_SNAPTOLEFT|V_SNAPTOTOP
