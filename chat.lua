@@ -19,6 +19,18 @@ local level_list = {
 	"redvolcano"
 }
 
+local colours = {
+	pink = V_MAGENTAMAP,
+	yellow = V_YELLOWMAP,
+	green = V_GREENMAP,
+	blue = V_BLUEMAP,
+	red = V_REDMAP,
+	orange = V_ORANGEMAP,
+	cyan = V_SKYMAP,
+	purple = V_PURPLEMAP,
+	turqoise = V_AQUAMAP
+}
+
 level_list[22] = "eggrock"
 level_list[23] = "eggrock"
 level_list[23] = "eggrock"
@@ -33,7 +45,7 @@ local rand = function(list)
 	return list[ P_RandomRange(1, #list) ]
 end
 
-local spawn_badnik = function(player)
+local spawn_badnik = function(player, username, message, namecolour, badnik)
 	local dist = 300*FRACUNIT
 	local x = FixedMul(cos(player.mo.angle), dist)
 	local y = FixedMul(sin(player.mo.angle), dist)
@@ -42,18 +54,12 @@ local spawn_badnik = function(player)
 	local xr = FixedMul(P_RandomFixed(), rrange)-rrange/2
 	local yr = FixedMul(P_RandomFixed(), rrange)-rrange/2
 
-	local levelname = level_list[gamemap]
-	local badnik = MT_PENGUINATOR
-	if levelname then
-		local level = badnik_list[levelname]
-		badnik = rand(level)
-	end
-
 	local spawned = P_SpawnMobjFromMobj(player.mo, x+xr, y+yr, 50*FRACUNIT, badnik)
 
 	spawned.chat = {}
-	spawned.chat.name = name_examples[ P_RandomRange( 1, #name_examples ) ]
-	spawned.chat.text = text_examples[ P_RandomRange( 1, #text_examples ) ]
+	spawned.chat.name = username
+	spawned.chat.text = message
+	spawned.chat.namecolour = colours[namecolour] or V_YELLOWMAP
 	table.insert(spawned_list, spawned)
 end
 
@@ -68,13 +74,19 @@ addHook("PreThinkFrame", function()
 
 	for p in players.iterate do
 		if p.cmd.buttons & BT_CUSTOM1 and p.mo then
-			spawn_badnik(p)
+			local username = rand(name_examples)
+			local message = rand(text_examples)
+			local namecolour = rand( {"pink","yellow","cyan"} )
+			local badnik = MT_PENGUINATOR
+			local levelname = level_list[gamemap]
+			if levelname then
+				local level = badnik_list[levelname]
+				badnik = rand(level)
+			end
+
+			spawn_badnik(p, username, message, namecolour, badnik)
 		end
 	end
-
-
-
-	--print(#spawned_list)
 end)
 
 
@@ -119,7 +131,8 @@ hud.add( function(v, player, camera)
 			local hpos = hudwidth/2 - FixedMul(distance, tan(hangle))
 			local vpos = hudheight/2 + FixedMul(distance, tan(vangle))
 
-			local nameflags = V_YELLOWMAP|V_SNAPTOLEFT|V_SNAPTOTOP
+			local nameflags = V_SNAPTOLEFT|V_SNAPTOTOP
+			nameflags = $1 | b.chat.namecolour
 			local namefont = "thin-fixed-center"
 			v.drawString(hpos, vpos-8*FRACUNIT, b.chat.name, nameflags, namefont)
 
