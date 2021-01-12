@@ -1,5 +1,7 @@
 
 
+local wait_timer = 10--35*5
+
 local badnik_list = {
 	greenflower =  { MT_BLUECRAWLA, MT_REDCRAWLA, MT_GFZFISH},
 	technohill = { MT_GOLDBUZZ, MT_REDBUZZ, MT_DETON, MT_SPRINGSHELL },
@@ -9,6 +11,11 @@ local badnik_list = {
 	redvolcano = {MT_UNIDUS, MT_PTERABYTE, MT_PYREFLY, MT_DRAGONBOMBER},
 	eggrock = {MT_JETTBOMBER, MT_JETTGUNNER, MT_POPUPTURRET, MT_SPINCUSHION, MT_SNAILER}
 }
+
+
+local queue = {}
+
+local command_file_name = "chat_commands.txt"
 
 local level_list = {
 	"greenflower", "greenflower", "greenflower",
@@ -64,12 +71,70 @@ local spawn_badnik = function(player, username, message, namecolour, badnik)
 end
 
 
+local pick_badnik = function()
+	local levelname = level_list[gamemap]
+	if levelname then
+		local level = badnik_list[levelname]
+		if level then
+			return rand(level)
+		end
+	end
+	return MT_PENGUINATOR
+end
+
+local split = function(string)
+	local list = {}
+	for token in string.gmatch(string, "[^\t]+") do
+		table.insert(list, token)
+	end
+	return list
+end
+
+local process_command = function (command_string)
+	print("Trying to process command: " .. command_string )
+
+	local command = split(command_string)
+	if command[1] == "BADNIK" then
+		local player = players[0]
+		print("Attempting to spawn badnik with username '"..command[2].."'; message '"..command[3].."'; and name colour '"..command[4].."'")
+		spawn_badnik(player, command[2], command[3], command[4], pick_badnik())
+	else
+		print("Unknown command "..command[1])
+	end
+end
+
+
+
 
 addHook("PreThinkFrame", function()
 	for i, b in pairs(spawned_list) do
 		if not b.valid then
 			table.remove(spawned_list, i)
 		end
+	end
+
+	if paused or menuactive or gamemap == titlemap then
+		return
+	end
+
+	if wait_timer < 1 then
+		wait_timer = 35*5
+
+		local file = io.openlocal(command_file_name, "r")
+
+		for line in file:lines() do
+			table.insert(queue, line)
+		end
+		io.openlocal(command_file_name, "w+")
+
+
+		if queue and #queue > 0 then
+			process_command(queue[1])
+			table.remove(queue, 1)
+		end
+
+	else
+		wait_timer = $1 - 1
 	end
 
 	for p in players.iterate do
