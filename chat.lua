@@ -68,20 +68,21 @@ hud.add( function(v, player, camera)
 				continue
 			end
 
-
+			--figure out vertical angle
 			local h = FixedHypot(cam.x-b.x, cam.y-b.y)
-			--local vang1 = R_PointToAngle2(cam.z, b.z, 0, h) - ANGLE_90
+			local vangdiff = R_PointToAngle2(0, 0, b.z-cam.z, h) - ANGLE_90
+			local vcangle = first_person and player.aiming or cam.aiming or 0
+			local vangle = vcangle + vangdiff
 
-			local vangle = first_person and player.aiming or cam.aiming or 0 --+ vang1
-			vangle = AngleFixed($1)
-
-			vangle = $1
-			if vangle > 180*FRACUNIT then
-				vangle = $1-360*FRACUNIT
+			--again just check if we're outside the FOV
+			local fvangle = AngleFixed(vangle)
+			local fvfov = FixedMul(AngleFixed(fov), FRACUNIT*v.height()/v.width())
+			if fvangle < f360 - fvfov and fvangle > fvfov then
+				continue
 			end
 
 			local hpos = hudwidth/2 - FixedMul(distance, tan(hangle))
-			local vpos = 100*FRACUNIT + FixedDiv(FixedMul(vangle,200*FRACUNIT), 56*FRACUNIT)
+			local vpos = hudheight/2 + FixedMul(distance, tan(vangle))
 
 			local nameflags = V_YELLOWMAP|V_SNAPTOLEFT|V_SNAPTOTOP
 			local namefont = "thin-fixed-center"
