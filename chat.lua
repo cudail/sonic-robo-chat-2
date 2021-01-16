@@ -115,6 +115,10 @@ addHook("PreThinkFrame", function()
 		end
 	end
 
+	table.sort(spawned_list, function(a, b)
+		return R_PointToDist(a.x, a.y) > R_PointToDist(b.x, b.y)
+	end)
+
 	if paused or menuactive or gamemap == titlemap then
 		return
 	end
@@ -190,7 +194,6 @@ hud.add( function(v, player, camera)
 			local namefont = "thin-fixed-center"
 			local textfont = "thin-fixed-center"
 			local lineheight = 8
-			print(R_PointToDist(b.x, b.y)/FRACUNIT)
 			if R_PointToDist(b.x, b.y) > 1000*FRACUNIT then
 				namefont = "small-thin-fixed-center"
 				textfont = "small-thin-fixed-center"
