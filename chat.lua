@@ -12,6 +12,7 @@ local badnik_list = {
 	eggrock = {MT_JETTBOMBER, MT_JETTGUNNER, MT_POPUPTURRET, MT_SPINCUSHION, MT_SNAILER}
 }
 
+
 local queue = {}
 
 local command_file_name = "chat_commands.txt"
@@ -124,6 +125,7 @@ addHook("PreThinkFrame", function()
 		spawn_object_with_message(players[0], "test", "message", "pink", pick_badnik())
 
 		local file = io.openlocal(command_file_name, "r")
+
 		for line in file:lines() do
 			table.insert(queue, line)
 		end
@@ -153,6 +155,9 @@ hud.add( function(v, player, camera)
 
 	for i, b in pairs(spawned_list) do
 		if b.valid then
+
+			if not P_CheckSight(player.mo, b) then continue end
+
 			local hangdiff = R_PointToAngle2(cam.x, cam.y, b.x, b.y) --Angle between camera vector and object
 			local hangle = hangdiff - cam.angle
 
