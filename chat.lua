@@ -2,6 +2,8 @@
 
 local wait_timer = 10
 
+local SPAWN_MESSAGE_TIMEOUT = TICRATE*60 --length of time to display messages over spawned objects
+
 local badnik_list = {
 	greenflower =  { MT_BLUECRAWLA, MT_REDCRAWLA, MT_GFZFISH},
 	technohill = { MT_GOLDBUZZ, MT_REDBUZZ, MT_DETON, MT_SPRINGSHELL },
@@ -67,6 +69,7 @@ local spawn_object_with_message = function(player, username, message, namecolour
 	spawned.chat.name = username
 	spawned.chat.text = message
 	spawned.chat.namecolour = colours[namecolour] or V_YELLOWMAP
+	spawned.chat.timer = 0
 	table.insert(spawned_list, spawned)
 end
 
@@ -110,8 +113,10 @@ end
 
 addHook("PreThinkFrame", function()
 	for i, b in pairs(spawned_list) do
-		if not b.valid then
+		if not b.valid or b.chat.timer > SPAWN_MESSAGE_TIMEOUT then
 			table.remove(spawned_list, i)
+		else
+			b.chat.timer = $1+1
 		end
 	end
 
