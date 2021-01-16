@@ -187,13 +187,23 @@ hud.add( function(v, player, camera)
 			local hpos = hudwidth/2 - FixedMul(distance, tan(hangle))
 			local vpos = hudheight/2 + FixedMul(distance, tan(vangle))
 
+			local namefont = "thin-fixed-center"
+			local textfont = "thin-fixed-center"
+			local lineheight = 8
+			print(R_PointToDist(b.x, b.y)/FRACUNIT)
+			if R_PointToDist(b.x, b.y) > 1000*FRACUNIT then
+				namefont = "small-thin-fixed-center"
+				textfont = "small-thin-fixed-center"
+				lineheight = 4
+			end
+
 			local nameflags = V_SNAPTOLEFT|V_SNAPTOTOP
 			nameflags = $1 | b.chat.namecolour
-			local namefont = "thin-fixed-center"
-			v.drawString(hpos, vpos-8*FRACUNIT, b.chat.name, nameflags, namefont)
+
+			v.drawString(hpos, vpos-lineheight*FRACUNIT, b.chat.name, nameflags, namefont)
 
 			local textflags = V_SNAPTOLEFT|V_SNAPTOTOP
-			local textfont = "thin-fixed-center"
+
 			v.drawString(hpos, vpos, b.chat.text, textflags, textfont)
 		end
 	end
