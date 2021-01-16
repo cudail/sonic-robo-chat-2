@@ -182,7 +182,7 @@ hud.add( function(v, player, camera)
 
 			--figure out vertical angle
 			local h = FixedHypot(cam.x-b.x, cam.y-b.y)
-			local vangdiff = R_PointToAngle2(0, 0, b.z-cam.z, h) - ANGLE_90
+			local vangdiff = R_PointToAngle2(0, 0, b.z-cam.z+b.height+20*FRACUNIT, h) - ANGLE_90
 			local vcangle = first_person and player.aiming or cam.aiming or 0
 			local vangle = vcangle + vangdiff
 
