@@ -1,6 +1,6 @@
 
 
-local wait_timer = 10--35*5
+local wait_timer = 10
 
 local badnik_list = {
 	greenflower =  { MT_BLUECRAWLA, MT_REDCRAWLA, MT_GFZFISH},
@@ -11,7 +11,6 @@ local badnik_list = {
 	redvolcano = {MT_UNIDUS, MT_PTERABYTE, MT_PYREFLY, MT_DRAGONBOMBER},
 	eggrock = {MT_JETTBOMBER, MT_JETTGUNNER, MT_POPUPTURRET, MT_SPINCUSHION, MT_SNAILER}
 }
-
 
 local queue = {}
 
@@ -48,11 +47,11 @@ local name_examples = {"oakenreef", "BlazeHedgehog", "bestfriendmothman"}
 local text_examples = {"test", "hello", "hi"}
 
 
-local rand = function(list)
+local rand_entry = function(list)
 	return list[ P_RandomRange(1, #list) ]
 end
 
-local spawn_badnik = function(player, username, message, namecolour, badnik)
+local spawn_object_with_message = function(player, username, message, namecolour, object_id)
 	local dist = 300*FRACUNIT
 	local x = FixedMul(cos(player.mo.angle), dist)
 	local y = FixedMul(sin(player.mo.angle), dist)
@@ -61,7 +60,7 @@ local spawn_badnik = function(player, username, message, namecolour, badnik)
 	local xr = FixedMul(P_RandomFixed(), rrange)-rrange/2
 	local yr = FixedMul(P_RandomFixed(), rrange)-rrange/2
 
-	local spawned = P_SpawnMobjFromMobj(player.mo, x+xr, y+yr, 50*FRACUNIT, badnik)
+	local spawned = P_SpawnMobjFromMobj(player.mo, x+xr, y+yr, 50*FRACUNIT, object_id)
 
 	spawned.chat = {}
 	spawned.chat.name = username
@@ -71,12 +70,13 @@ local spawn_badnik = function(player, username, message, namecolour, badnik)
 end
 
 
+
 local pick_badnik = function()
 	local levelname = level_list[gamemap]
 	if levelname then
 		local level = badnik_list[levelname]
 		if level then
-			return rand(level)
+			return rand_entry(level)
 		end
 	end
 	return MT_PENGUINATOR
@@ -97,11 +97,12 @@ local process_command = function (command_string)
 	if command[1] == "BADNIK" then
 		local player = players[0]
 		print("Attempting to spawn badnik with username '"..command[2].."'; message '"..command[3].."'; and name colour '"..command[4].."'")
-		spawn_badnik(player, command[2], command[3], command[4], pick_badnik())
+		spawn_object_with_message(player, command[2], command[3], command[4], pick_badnik())
 	else
 		print("Unknown command "..command[1])
 	end
 end
+
 
 
 
@@ -118,10 +119,11 @@ addHook("PreThinkFrame", function()
 	end
 
 	if wait_timer < 1 then
-		wait_timer = 35*5
+		wait_timer = 2
+
+		spawn_object_with_message(players[0], "test", "message", "pink", pick_badnik())
 
 		local file = io.openlocal(command_file_name, "r")
-
 		for line in file:lines() do
 			table.insert(queue, line)
 		end
@@ -135,22 +137,6 @@ addHook("PreThinkFrame", function()
 
 	else
 		wait_timer = $1 - 1
-	end
-
-	for p in players.iterate do
-		if p.cmd.buttons & BT_CUSTOM1 and p.mo then
-			local username = rand(name_examples)
-			local message = rand(text_examples)
-			local namecolour = rand( {"pink","yellow","cyan"} )
-			local badnik = MT_PENGUINATOR
-			local levelname = level_list[gamemap]
-			if levelname then
-				local level = badnik_list[levelname]
-				badnik = rand(level)
-			end
-
-			spawn_badnik(p, username, message, namecolour, badnik)
-		end
 	end
 end)
 
