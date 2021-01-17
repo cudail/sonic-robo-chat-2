@@ -136,7 +136,9 @@ end
 
 
 local parseDecimal = function(text)
-	print(text)
+	if text == nil then
+		return nil
+	end
 	local num = tonumber(text)
 	if num then
 		return num*FRACUNIT
@@ -179,7 +181,7 @@ end
 
 
 
-local spawn_object_with_message = function(player, username, message, namecolour, object_id)
+local spawn_object_with_message = function(player, username, message, namecolour, object_id, scale)
 	local dist = 300*FRACUNIT
 	local x = FixedMul(cos(player.mo.angle), dist)
 	local y = FixedMul(sin(player.mo.angle), dist)
@@ -189,7 +191,7 @@ local spawn_object_with_message = function(player, username, message, namecolour
 	local yr = FixedMul(P_RandomFixed(), rrange)-rrange/2
 
 	local spawned = P_SpawnMobjFromMobj(player.mo, x+xr, y+yr, 50*FRACUNIT, object_id)
-	spawned.scale = FRACUNIT
+	spawned.scale = scale
 
 	local linelength = 40
 
@@ -235,10 +237,14 @@ local process_command = function (command_string)
 	local command = split(command_string, "\t")
 	local player = players[0]
 	local commandname = command[1]
-	--BADNIK	{username}	{message}	{namecolour}
+	--BADNIK	{username}	{message}	{namecolour}	[scale]
 	if commandname == "BADNIK" then
-		print("Attempting to spawn badnik with username '"..command[2].."'; message '"..command[3].."'; and name colour '"..command[4].."'")
-		spawn_object_with_message(player, command[2], command[3], command[4], pick_badnik())
+		local username, message, namecolour, scale = command[2], command[3], command[4], parseDecimal(command[5])
+		if scale == nil then
+			scale = FRACUNIT
+		end
+		print("Attempting to spawn badnik with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'; and scale "..scale)
+		spawn_object_with_message(player, command[2], command[3], command[4], pick_badnik(), scale)
 
 	--SCALE	{scale}	{duration}
 	elseif commandname == "SCALE" then
