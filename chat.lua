@@ -189,6 +189,7 @@ local spawn_object_with_message = function(player, username, message, namecolour
 	local yr = FixedMul(P_RandomFixed(), rrange)-rrange/2
 
 	local spawned = P_SpawnMobjFromMobj(player.mo, x+xr, y+yr, 50*FRACUNIT, object_id)
+	spawned.scale = FRACUNIT
 
 	local linelength = 40
 
