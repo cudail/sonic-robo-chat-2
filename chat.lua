@@ -44,15 +44,29 @@ level_list[22] = "eggrock"
 level_list[23] = "eggrock"
 level_list[23] = "eggrock"
 
+
 local spawned_list = {}
 
-local name_examples = {"oakenreef", "BlazeHedgehog", "bestfriendmothman"}
-local text_examples = {"test", "hello", "hi"}
 
 
 local rand_entry = function(list)
 	return list[ P_RandomRange(1, #list) ]
 end
+
+
+local last = function(list)
+	return list[#list]
+end
+
+
+local split = function(string, delimiter)
+	local list = {}
+	for token in string.gmatch(string, "[^"..delimiter.."]+") do
+		table.insert(list, token)
+	end
+	return list
+end
+
 
 local spawn_object_with_message = function(player, username, message, namecolour, object_id)
 	local dist = 300*FRACUNIT
@@ -65,11 +79,27 @@ local spawn_object_with_message = function(player, username, message, namecolour
 
 	local spawned = P_SpawnMobjFromMobj(player.mo, x+xr, y+yr, 50*FRACUNIT, object_id)
 
+	local linelength = 40
+
 	spawned.chat = {}
 	spawned.chat.name = username
-	spawned.chat.text = message
 	spawned.chat.namecolour = colours[namecolour] or V_YELLOWMAP
 	spawned.chat.timer = 0
+	spawned.chat.text = {}
+	local words = split(message, " ")
+	local current_length = 0
+	for i = 1, #words do
+		if #(spawned.chat.text) == 0 then
+			spawned.chat.text = {words[i]}
+		elseif #(last(spawned.chat.text)) > linelength then
+			table.insert(spawned.chat.text, words[i])
+		elseif #(last(spawned.chat.text)) + #words[i] + 1 > linelength then
+			table.insert(spawned.chat.text, words[i])
+		else
+			spawned.chat.text[#spawned.chat.text] = last(spawned.chat.text) .. " " .. words[i]
+		end
+	end
+
 	table.insert(spawned_list, spawned)
 end
 
@@ -86,18 +116,12 @@ local pick_badnik = function()
 	return MT_PENGUINATOR
 end
 
-local split = function(string)
-	local list = {}
-	for token in string.gmatch(string, "[^\t]+") do
-		table.insert(list, token)
-	end
-	return list
-end
+
 
 local process_command = function (command_string)
 	print("Trying to process command: " .. command_string )
 
-	local command = split(command_string)
+	local command = split(command_string, "\t")
 	if command[1] == "BADNIK" then
 		local player = players[0]
 		print("Attempting to spawn badnik with username '"..command[2].."'; message '"..command[3].."'; and name colour '"..command[4].."'")
@@ -129,9 +153,7 @@ addHook("PreThinkFrame", function()
 	end
 
 	if wait_timer < 1 then
-		wait_timer = 2
-
-		spawn_object_with_message(players[0], "test", "message", "pink", pick_badnik())
+		wait_timer = TICRATE*3
 
 		local file = io.openlocal(command_file_name, "r")
 
@@ -150,6 +172,7 @@ addHook("PreThinkFrame", function()
 		wait_timer = $1 - 1
 	end
 end)
+
 
 
 hud.add( function(v, player, camera)
@@ -208,11 +231,12 @@ hud.add( function(v, player, camera)
 			local nameflags = V_SNAPTOLEFT|V_SNAPTOTOP
 			nameflags = $1 | b.chat.namecolour
 
-			v.drawString(hpos, vpos-lineheight*FRACUNIT, b.chat.name, nameflags, namefont)
+			v.drawString(hpos, vpos-lineheight*FRACUNIT*#b.chat.text, b.chat.name, nameflags, namefont)
 
 			local textflags = V_SNAPTOLEFT|V_SNAPTOTOP
-
-			v.drawString(hpos, vpos, b.chat.text, textflags, textfont)
+			for i=1, #b.chat.text do
+				v.drawString(hpos, vpos-lineheight*FRACUNIT*(#b.chat.text-i), b.chat.text[i], textflags, textfont)
+			end
 		end
 	end
 end, "game")
