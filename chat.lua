@@ -324,8 +324,19 @@ end
 -- hooks --
 -----------
 
+
+
 addHook("PreThinkFrame", function()
+	if paused or menuactive or gamemap == titlemap then
+		return
+	end
+
 	local player = players[0]
+
+	if player.playerstate ~= PST_LIVE or player.pflags & PF_FINISHED > 0 or player.exiting > 0 then
+		return
+	end
+
 	if player.chat == nil then
 		player.chat = {scaletimer = 0}
 	end
@@ -347,10 +358,6 @@ addHook("PreThinkFrame", function()
 	table.sort(spawned_list, function(a, b)
 		return R_PointToDist(a.x, a.y) > R_PointToDist(b.x, b.y)
 	end)
-
-	if paused or menuactive or gamemap == titlemap then
-		return
-	end
 
 	if wait_timer < 1 then
 		wait_timer = TICRATE*5
