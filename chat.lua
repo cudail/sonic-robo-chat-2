@@ -155,18 +155,34 @@ local process_command = function (command_string)
 	print("Trying to process command: " .. command_string )
 	local command = split(command_string, "\t")
 	local player = players[0]
+	local commandname = command[1]
 	--BADNIK	{username}	{message}	{namecolour}
-	if command[1] == "BADNIK" then
+	if commandname == "BADNIK" then
 		print("Attempting to spawn badnik with username '"..command[2].."'; message '"..command[3].."'; and name colour '"..command[4].."'")
 		spawn_object_with_message(player, command[2], command[3], command[4], pick_badnik())
 
 	--SCALE	{scale}	{duration}
-	elseif command[1] == "SCALE" then
+	elseif commandname == "SCALE" then
 		local scale, dur = command[2], command[3]
 		print("Attemtping to scale player by "..scale.." for "..dur.." ticks")
 		player.chat.scaletimer = $1 + dur
 		player.mo.destscale = parseDecimal(scale)
 
+	--CHARACTER	{name}
+	elseif commandname == "CHARACTER" then
+		local charname = command[2]
+		if charname then
+			local skin = skins[charname]
+			if skin then
+				R_SetPlayerSkin(player, skin.name)
+				return true
+			end
+		end
+		local skin = rand_entry(skins)
+		while skin.name == player.mo.skin do
+			skin = rand_entry(skins)
+		end
+		R_SetPlayerSkin(player, skin.name)
 	else
 		print("Unknown command "..command[1])
 	end
@@ -206,7 +222,7 @@ addHook("PreThinkFrame", function()
 	end
 
 	if wait_timer < 1 then
-		wait_timer = TICRATE*3
+		wait_timer = TICRATE*5
 
 		local file = io.openlocal(command_file_name, "r")
 
