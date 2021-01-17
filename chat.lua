@@ -48,6 +48,45 @@ level_list[23] = "eggrock"
 local spawned_list = {}
 
 
+local split = function(string, delimiter)
+	local list = {}
+	for token in string.gmatch(string, "[^"..delimiter.."]+") do
+		table.insert(list, token)
+	end
+	return list
+end
+
+
+local parseDecimal = function(text)
+	print(text)
+	local num = tonumber(text)
+	if num then
+		return num*FRACUNIT
+	end
+
+	local parts = split(text, ".")
+	if parts == nil or #parts ~= 2 then
+		return nil
+	end
+
+	local integer, decimal = parts[1], parts[2]
+	num = tonumber(integer)
+	if num == nil then
+		return nil
+	end
+
+	num = $1*FRACUNIT
+	for i=1, #decimal do
+		local digit = tonumber(string.sub(decimal, i, i))
+		if digit == nil then
+			return nil
+		end
+		num = $1 + digit*FRACUNIT/(i*10)
+	end
+
+	return num
+end
+
 
 local rand_entry = function(list)
 	return list[ P_RandomRange(1, #list) ]
@@ -59,13 +98,7 @@ local last = function(list)
 end
 
 
-local split = function(string, delimiter)
-	local list = {}
-	for token in string.gmatch(string, "[^"..delimiter.."]+") do
-		table.insert(list, token)
-	end
-	return list
-end
+
 
 
 local spawn_object_with_message = function(player, username, message, namecolour, object_id)
@@ -127,12 +160,12 @@ local process_command = function (command_string)
 		print("Attempting to spawn badnik with username '"..command[2].."'; message '"..command[3].."'; and name colour '"..command[4].."'")
 		spawn_object_with_message(player, command[2], command[3], command[4], pick_badnik())
 
-	--SCALE	{multiply}	{divide}	{duration}
+	--SCALE	{scale}	{duration}
 	elseif command[1] == "SCALE" then
-		local mul, div, dur = command[2], command[3], command[4]
-		print("Attemtping to scale player by "..mul.."/"..div.." for "..dur.." ticks")
+		local scale, dur = command[2], command[3]
+		print("Attemtping to scale player by "..scale.." for "..dur.." ticks")
 		player.chat.scaletimer = $1 + dur
-		player.mo.destscale = mul*FRACUNIT/div
+		player.mo.destscale = parseDecimal(scale)
 
 	else
 		print("Unknown command "..command[1])
