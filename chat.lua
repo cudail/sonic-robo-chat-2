@@ -120,12 +120,20 @@ end
 
 local process_command = function (command_string)
 	print("Trying to process command: " .. command_string )
-
 	local command = split(command_string, "\t")
+	local player = players[0]
+	--BADNIK	{username}	{message}	{namecolour}
 	if command[1] == "BADNIK" then
-		local player = players[0]
 		print("Attempting to spawn badnik with username '"..command[2].."'; message '"..command[3].."'; and name colour '"..command[4].."'")
 		spawn_object_with_message(player, command[2], command[3], command[4], pick_badnik())
+
+	--SCALE	{multiply}	{divide}	{duration}
+	elseif command[1] == "SCALE" then
+		local mul, div, dur = command[2], command[3], command[4]
+		print("Attemtping to scale player by "..mul.."/"..div.." for "..dur.." ticks")
+		player.chat.scaletimer = $1 + dur
+		player.mo.destscale = mul*FRACUNIT/div
+
 	else
 		print("Unknown command "..command[1])
 	end
@@ -136,6 +144,18 @@ end
 
 
 addHook("PreThinkFrame", function()
+	local player = players[0]
+	if player.chat == nil then
+		player.chat = {scaletimer = 0}
+	end
+
+	if player.chat.scaletimer > 0 then
+		player.chat.scaletimer = $1 - 1
+	elseif player.chat.scaletimer == 0 then
+		player.mo.destscale = FRACUNIT
+	end
+
+
 	for i, b in pairs(spawned_list) do
 		if not b.valid or b.chat.timer > SPAWN_MESSAGE_TIMEOUT then
 			table.remove(spawned_list, i)
