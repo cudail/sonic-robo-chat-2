@@ -127,7 +127,15 @@ local skin_colours = {
 	rosy = SKINCOLOR_ROSY
 }
 
-
+local chaosEmeralds = {
+	MT_EMERALD1,
+	MT_EMERALD2,
+	MT_EMERALD3,
+	MT_EMERALD4,
+	MT_EMERALD5,
+	MT_EMERALD6,
+	MT_EMERALD7
+}
 
 
 ---------------
@@ -285,6 +293,26 @@ local process_command = function (command_string)
 			player.mo.color = colour
 		end
 
+	--SUPER	[give_emeralds]
+	elseif commandname == "SUPER" then
+		if skins[player.mo.skin].flags & SF_SUPER == 0 then
+			print(player.mo.skin .. " cannot go super.")
+			return false
+		end
+
+		if not All7Emeralds(emeralds) then
+			if command[2] == "true" then
+				print("granting emeralds")
+				for i = 1, #chaosEmeralds do
+					P_SpawnMobj(player.mo.x, player.mo.y, player.mo.z, chaosEmeralds[i])
+				end
+			else
+				print("player does not have emeralds, cannot go super")
+				return false
+			end
+		end
+		print("Forcing super")
+		P_DoSuperTransformation(player)
 	else
 		print("Unknown command "..command[1])
 	end
@@ -307,7 +335,6 @@ addHook("PreThinkFrame", function()
 	elseif player.chat.scaletimer == 0 then
 		player.mo.destscale = FRACUNIT
 	end
-
 
 	for i, b in pairs(spawned_list) do
 		if not b.valid or b.chat.timer > SPAWN_MESSAGE_TIMEOUT then
