@@ -40,6 +40,79 @@ local colours = {
 	turqoise = V_AQUAMAP
 }
 
+
+local skin_colours = {
+	white = SKINCOLOR_WHITE,
+	bone = SKINCOLOR_BONE,
+	cloudy = SKINCOLOR_CLOUDY,
+	grey = SKINCOLOR_GREY,
+	silver = SKINCOLOR_SILVER,
+	carbon = SKINCOLOR_CARBON,
+	jet = SKINCOLOR_JET,
+	black = SKINCOLOR_BLACK,
+	aether = SKINCOLOR_AETHER,
+	slate = SKINCOLOR_SLATE,
+	bluebell = SKINCOLOR_BLUEBELL,
+	pink = SKINCOLOR_PINK,
+	yogurt = SKINCOLOR_YOGURT,
+	brown = SKINCOLOR_BROWN,
+	bronze = SKINCOLOR_BRONZE,
+	tan = SKINCOLOR_TAN,
+	beige = SKINCOLOR_BEIGE,
+	moss = SKINCOLOR_MOSS,
+	azure = SKINCOLOR_AZURE,
+	lavender = SKINCOLOR_LAVENDER,
+	ruby = SKINCOLOR_RUBY,
+	salmon = SKINCOLOR_SALMON,
+	red = SKINCOLOR_RED,
+	crimson = SKINCOLOR_CRIMSON,
+	flame = SKINCOLOR_FLAME,
+	ketchup = SKINCOLOR_KETCHUP,
+	peachy = SKINCOLOR_PEACHY,
+	quail = SKINCOLOR_QUAIL,
+	sunset = SKINCOLOR_SUNSET,
+	copper = SKINCOLOR_COPPER,
+	apricot = SKINCOLOR_APRICOT,
+	orange = SKINCOLOR_ORANGE,
+	rust = SKINCOLOR_RUST,
+	gold = SKINCOLOR_GOLD,
+	sandy = SKINCOLOR_SANDY,
+	yellow = SKINCOLOR_YELLOW,
+	olive = SKINCOLOR_OLIVE,
+	lime = SKINCOLOR_LIME,
+	peridot = SKINCOLOR_PERIDOT,
+	apple = SKINCOLOR_APPLE,
+	green = SKINCOLOR_GREEN,
+	forest = SKINCOLOR_FOREST,
+	emerald = SKINCOLOR_EMERALD,
+	mint = SKINCOLOR_MINT,
+	seafoam = SKINCOLOR_SEAFOAM,
+	aqua = SKINCOLOR_AQUA,
+	teal = SKINCOLOR_TEAL,
+	wave = SKINCOLOR_WAVE,
+	cyan = SKINCOLOR_CYAN,
+	sky = SKINCOLOR_SKY,
+	cerulean = SKINCOLOR_CERULEAN,
+	icy = SKINCOLOR_ICY,
+	sapphire = SKINCOLOR_SAPPHIRE,
+	cornflower = SKINCOLOR_CORNFLOWER,
+	blue = SKINCOLOR_BLUE,
+	cobalt = SKINCOLOR_COBALT,
+	vapor = SKINCOLOR_VAPOR,
+	dusk = SKINCOLOR_DUSK,
+	pastel = SKINCOLOR_PASTEL,
+	purple = SKINCOLOR_PURPLE,
+	bubblegum = SKINCOLOR_BUBBLEGUM,
+	magenta = SKINCOLOR_MAGENTA,
+	neon = SKINCOLOR_NEON,
+	violet = SKINCOLOR_VIOLET,
+	lilac = SKINCOLOR_LILAC,
+	plum = SKINCOLOR_PLUM,
+	raspberry = SKINCOLOR_RASPBERRY,
+	rosy = SKINCOLOR_ROSY
+}
+
+
 level_list[22] = "eggrock"
 level_list[23] = "eggrock"
 level_list[23] = "eggrock"
@@ -168,21 +241,32 @@ local process_command = function (command_string)
 		player.chat.scaletimer = $1 + dur
 		player.mo.destscale = parseDecimal(scale)
 
-	--CHARACTER	{name}
+	--CHARACTER	[colour]	[name]
 	elseif commandname == "CHARACTER" then
-		local charname = command[2]
-		if charname then
-			local skin = skins[charname]
-			if skin then
-				R_SetPlayerSkin(player, skin.name)
-				return true
+		local colour, skin
+		if #command > 1 and skin_colours[command[2]] then
+			colour = skin_colours[command[2]]
+			if #command > 2 and skins[command[3]] then
+				skin = skins[command[3]].name
 			end
+		elseif #command > 1 and skins[command[2]] then
+			skin = skins[command[2]].name
 		end
-		local skin = rand_entry(skins)
-		while skin.name == player.mo.skin do
-			skin = rand_entry(skins)
+
+		if skin then
+			R_SetPlayerSkin(player, skin)
+		else
+			skin = rand_entry(skins).name
+			while skin == player.mo.skin do
+				skin = rand_entry(skins).name
+			end
+			R_SetPlayerSkin(player, skin)
 		end
-		R_SetPlayerSkin(player, skin.name)
+
+		if colour then
+			player.mo.color = colour
+		end
+
 	else
 		print("Unknown command "..command[1])
 	end
