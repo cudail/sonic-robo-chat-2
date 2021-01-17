@@ -1,8 +1,21 @@
 
+---------------
+-- variables --
+---------------
 
 local wait_timer = 10
+local queue = {}
+local spawned_list = {}
+
+
+---------------
+-- constants --
+---------------
+
+local command_file_name = "chat_commands.txt"
 
 local SPAWN_MESSAGE_TIMEOUT = TICRATE*60 --length of time to display messages over spawned objects
+
 
 local badnik_list = {
 	greenflower =  { MT_BLUECRAWLA, MT_REDCRAWLA, MT_GFZFISH},
@@ -14,11 +27,6 @@ local badnik_list = {
 	eggrock = {MT_JETTBOMBER, MT_JETTGUNNER, MT_POPUPTURRET, MT_SPINCUSHION, MT_SNAILER}
 }
 
-
-local queue = {}
-
-local command_file_name = "chat_commands.txt"
-
 local level_list = {
 	"greenflower", "greenflower", "greenflower",
 	"technohill", "technohill", "technohill",
@@ -27,6 +35,9 @@ local level_list = {
 	"aridcanyon", "aridcanyon", "aridcanyon",
 	"redvolcano"
 }
+level_list[22] = "eggrock"
+level_list[23] = "eggrock"
+level_list[23] = "eggrock"
 
 local text_colours = {
 	pink = V_MAGENTAMAP,
@@ -44,7 +55,6 @@ local text_colours = {
 	brown = V_BROWNMAP,
 	rosy = V_ROSYMAP
 }
-
 
 local skin_colours = {
 	white = SKINCOLOR_WHITE,
@@ -118,12 +128,11 @@ local skin_colours = {
 }
 
 
-level_list[22] = "eggrock"
-level_list[23] = "eggrock"
-level_list[23] = "eggrock"
 
 
-local spawned_list = {}
+---------------
+-- functions --
+---------------
 
 
 local split = function(string, delimiter)
@@ -176,9 +185,6 @@ end
 local last = function(list)
 	return list[#list]
 end
-
-
-
 
 
 local spawn_object_with_message = function(player, username, message, namecolour, object_id, scale)
@@ -286,7 +292,9 @@ end
 
 
 
-
+-----------
+-- hooks --
+-----------
 
 addHook("PreThinkFrame", function()
 	local player = players[0]
