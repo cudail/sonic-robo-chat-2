@@ -34,10 +34,15 @@ local colours = {
 	green = V_GREENMAP,
 	blue = V_BLUEMAP,
 	red = V_REDMAP,
+	grey = V_GRAYMAP,
 	orange = V_ORANGEMAP,
-	cyan = V_SKYMAP,
+	sky = V_SKYMAP,
 	purple = V_PURPLEMAP,
-	turqoise = V_AQUAMAP
+	aqua = V_AQUAMAP,
+	peridot = V_PERIDOTMAP,
+	azure = V_AZUREMAP,
+	brown = V_BROWNMAP,
+	rosy = V_ROSYMAP
 }
 
 
