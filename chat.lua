@@ -28,7 +28,7 @@ local level_list = {
 	"redvolcano"
 }
 
-local colours = {
+local text_colours = {
 	pink = V_MAGENTAMAP,
 	yellow = V_YELLOWMAP,
 	green = V_GREENMAP,
@@ -194,7 +194,7 @@ local spawn_object_with_message = function(player, username, message, namecolour
 
 	spawned.chat = {}
 	spawned.chat.name = username
-	spawned.chat.namecolour = colours[namecolour] or V_YELLOWMAP
+	spawned.chat.namecolour = text_colours[namecolour] or V_YELLOWMAP
 	spawned.chat.timer = 0
 	spawned.chat.text = {}
 	local words = split(message, " ")
