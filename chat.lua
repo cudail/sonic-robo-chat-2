@@ -189,7 +189,19 @@ end
 
 
 local rand_entry = function(list)
-	return list[ P_RandomRange(1, #list) ]
+	if list[0] then
+		return list[ P_RandomRange(0, #list - 1) ]
+	else
+		return list[ P_RandomRange(1, #list) ]
+	end
+end
+
+local rand_dict_entry = function(tbl)
+	local keyset = {}
+	for k, v in pairs(tbl) do
+		table.insert(keyset, k)
+	end
+	return tbl[rand_entry(keyset)]
 end
 
 
@@ -256,7 +268,10 @@ local change_character = function(player, colour, skin)
 		end
 		skin = skintable.name
 	end
-	if not colour then
+
+	if colour == "random" then
+		colour = rand_entry(skin_colours)
+	elseif not colour then
 		colour = skins[skin].prefcolor
 	end
 
@@ -295,16 +310,19 @@ local process_command = function (command_string)
 	--CHARACTER|[colour]|[name]
 	elseif commandname == "CHARACTER" then
 		local colour, skin
-		if #command > 1 and skin_colours[command[2]] then
-			colour = skin_colours[command[2]]
+		if #command > 1 then
+			if command[2] == "random" then
+				colour = rand_dict_entry(skin_colours)
+			elseif skin_colours[command[2]] then
+				colour = skin_colours[command[2]]
+			elseif skins[command[2]] then
+				skin = skins[command[2]]
+			end
 			if #command > 2 and skins[command[3]] then
 				skin = skins[command[3]].name
 			end
-		elseif #command > 1 and skins[command[2]] then
-			skin = skins[command[2]].name
 		end
 		change_character(player, colour, skin)
-
 
 	--SUPER	[give_emeralds]
 	elseif commandname == "SUPER" then
