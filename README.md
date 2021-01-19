@@ -1,6 +1,6 @@
 
 
-BADNIK	{username}	{message}	{namecolour}
+BADNIK|{username}|{message}|{namecolour}
 
 namecolour is one of:
 pink, yellow, green, blue, red, grey, orange, sky, purple, aqua, peridot, azure, brown, rosy
@@ -9,7 +9,7 @@ pink, yellow, green, blue, red, grey, orange, sky, purple, aqua, peridot, azure,
 
 
 
-SCALE	{multiply}	{divide}	{duration}
+SCALE|{multiply}|{divide}|{duration}
 
 Durations are in in gameplay ticks. 35 ticks = one second.
 
@@ -17,7 +17,7 @@ Durations are in in gameplay ticks. 35 ticks = one second.
 
 
 
-CHARACTER	[charactercolour]	[name]
+CHARACTER|[charactercolour]|[name]
 `name` is the name of the character to change to. E.g. `sonic`, `tails`, `knuckles`, `amy`, `fang` or `metalsonic`. If not specified then a random character other than the player's current one will be chosen.
 If `charactercolour` is not specified player colour won't be changed.
 
@@ -29,7 +29,7 @@ white, bone, cloudy, grey, silver, carbon, jet, black, aether, slate, bluebell, 
 
 
 
-SUPER	[give_emeralds]
+SUPER|[give_emeralds]
 if give_emeralds is true then the player will be granted all emeralds immediately. If the player does not have all the emeralds and give_emeralds is not true then this will have no effect. Can only be used by characters who have a super transformation (Sonic, Knuckles and Metal Sonic)
 
 

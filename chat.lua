@@ -248,10 +248,10 @@ end
 
 local process_command = function (command_string)
 	print("Trying to process command: " .. command_string )
-	local command = split(command_string, "\t")
+	local command = split(command_string, "|")
 	local player = players[0]
 	local commandname = command[1]
-	--BADNIK	{username}	{message}	{namecolour}	[scale]
+	--BADNIK|{username}|{message}|{namecolour}|[scale]
 	if commandname == "BADNIK" then
 		local username, message, namecolour, scale = command[2], command[3], command[4], parseDecimal(command[5])
 		if scale == nil then
@@ -260,14 +260,14 @@ local process_command = function (command_string)
 		print("Attempting to spawn badnik with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'; and scale "..scale)
 		spawn_object_with_message(player, command[2], command[3], command[4], pick_badnik(), scale)
 
-	--SCALE	{scale}	{duration}
+	--SCALE|{scale}|{duration}
 	elseif commandname == "SCALE" then
 		local scale, dur = command[2], command[3]
 		print("Attemtping to scale player by "..scale.." for "..dur.." ticks")
 		player.chat.scaletimer = $1 + dur
 		player.mo.destscale = parseDecimal(scale)
 
-	--CHARACTER	[colour]	[name]
+	--CHARACTER|[colour]|[name]
 	elseif commandname == "CHARACTER" then
 		local colour, skin
 		if #command > 1 and skin_colours[command[2]] then
