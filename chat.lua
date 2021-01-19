@@ -151,6 +151,9 @@ local split = function(string, delimiter)
 	return list
 end
 
+local trim = function(str)
+	return string.gsub(str, "^%s*(.-)%s*$", "%1")
+end
 
 local parseDecimal = function(text)
 	if text == nil then
@@ -249,6 +252,9 @@ end
 local process_command = function (command_string)
 	print("Trying to process command: " .. command_string )
 	local command = split(command_string, "|")
+	for i=1, #command do
+		command[i] = trim($1)
+	end
 	local player = players[0]
 	local commandname = command[1]
 	--BADNIK|{username}|{message}|{namecolour}|[scale]
