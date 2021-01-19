@@ -248,10 +248,29 @@ local pick_badnik = function()
 end
 
 
+local change_character = function(player, colour, skin)
+	if not skin then
+		local skintable = rand_entry(skins)
+		while not skintable or skintable.name == player.mo.skin do
+			skintable = rand_entry(skins)
+		end
+		skin = skintable.name
+	end
+	if not colour then
+		colour = skins[skin].prefcolor
+	end
+
+	R_SetPlayerSkin(player, skin)
+	player.mo.color = colour
+end
+
 
 local process_command = function (command_string)
 	print("Trying to process command: " .. command_string )
 	local command = split(command_string, "|")
+	if not command or #command == 0 then
+		return
+	end
 	for i=1, #command do
 		command[i] = trim($1)
 	end
@@ -284,20 +303,8 @@ local process_command = function (command_string)
 		elseif #command > 1 and skins[command[2]] then
 			skin = skins[command[2]].name
 		end
+		change_character(player, colour, skin)
 
-		if skin then
-			R_SetPlayerSkin(player, skin)
-		else
-			skin = rand_entry(skins).name
-			while skin == player.mo.skin do
-				skin = rand_entry(skins).name
-			end
-			R_SetPlayerSkin(player, skin)
-		end
-
-		if colour then
-			player.mo.color = colour
-		end
 
 	--SUPER	[give_emeralds]
 	elseif commandname == "SUPER" then
