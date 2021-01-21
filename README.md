@@ -66,6 +66,11 @@ Spawn an item monitor in front of the player.
 Commands that affect the player directly. Many have a `duration`. Duration should be an integer representing the number of gameplay ticks the effect will last for. There are 35 ticks a second. E.g. 5 seconds is 175 ticks.
 
 
+### TURN
+
+Immediately turn the player 180°.
+
+
 ### REVERSE|{duration}
 
 Reverses the player's controls for the given `duration` of gameplay ticks.
