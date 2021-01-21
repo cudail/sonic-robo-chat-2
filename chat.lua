@@ -3,7 +3,14 @@
 -- variables --
 ---------------
 
-local wait_timer = 10
+
+local chat_config = {
+	parser_interval = 5*TICRATE, -- how long to wait between attempts to parse commands
+	command_interval = 1 -- how long to wait between attempts to activate a command from the queue
+}
+
+local parser_timer = chat_config.parser_interval
+local command_timer = chat_config.command_interval
 local queue = {}
 local spawned_list = {}
 
@@ -399,8 +406,9 @@ addHook("PreThinkFrame", function()
 		return R_PointToDist(a.x, a.y) > R_PointToDist(b.x, b.y)
 	end)
 
-	if wait_timer < 1 then
-		wait_timer = TICRATE*5
+
+	if parser_timer < 1 then
+		parser_timer = chat_config.parser_interval
 
 		local file = io.openlocal(command_file_name, "r")
 
@@ -408,15 +416,19 @@ addHook("PreThinkFrame", function()
 			table.insert(queue, line)
 		end
 		io.openlocal(command_file_name, "w+")
+	else
+		parser_timer = $1 - 1
+	end
 
+	if command_timer < 1 then
+		command_timer = chat_config.command_interval
 
 		if queue and #queue > 0 then
 			process_command(queue[1])
 			table.remove(queue, 1)
 		end
-
 	else
-		wait_timer = $1 - 1
+		command_timer = $1 - 1
 	end
 end)
 
