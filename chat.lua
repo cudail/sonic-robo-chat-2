@@ -18,6 +18,7 @@ local spawned_list = {}
 
 local control_reverse_timer = 0
 local force_jump_timer = 0
+local speed_scale_timer = 0
 
 ---------------
 -- constants --
@@ -485,6 +486,21 @@ local process_command = function (command_string)
 		player.mo.momx = - $1
 		player.mo.momy = - $1
 
+	--SPEED|{scale}|{duration}
+	elseif commandname == "SPEED" then
+		local scale, duration = parseDecimal(command[2]), tonumber(command[3])
+		if scale == nil or duration == nil or scale < 1 or duration < 1 then
+			return false
+		end
+		speed_scale_timer = duration
+		local skin = skins[player.mo.skin]
+		player.normalspeed = FixedMul(skin.normalspeed, scale)
+		player.runspeed = FixedMul(skin.runspeed, scale)
+		player.actionspd = FixedMul(skin.actionspd, scale)
+		player.mindash = FixedMul(skin.mindash, scale)
+		player.maxdash = FixedMul(skin.maxdash, scale)
+		player.thrustfactor = FixedMul(skin.thrustfactor, scale)
+
 	else
 		print("Unknown command "..command[1])
 	end
@@ -569,6 +585,20 @@ addHook("PreThinkFrame", function()
 			P_DoJump(player)
 		end
 	end
+
+	if speed_scale_timer == 1 then
+		speed_scale_timer = 0
+		local skin = skins[player.mo.skin]
+		player.normalspeed = skin.normalspeed
+		player.runspeed = skin.runspeed
+		player.actionspd = skin.actionspd
+		player.mindash = skin.mindash
+		player.maxdash = skin.maxdash
+		player.thrustfactor = skin.thrustfactor
+	elseif speed_scale_timer > 0 then
+		speed_scale_timer = $1 - 1
+	end
+
 end)
 
 

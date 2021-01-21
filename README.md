@@ -81,6 +81,11 @@ Reverses the player's controls for the given `duration` of gameplay ticks.
 Forces the player to constantly jump for the given `duration` of gameplay ticks.
 
 
+### SPEED|{scale}|{duration}
+
+Scales the player's speed and acceleration stats by factor `scale` for the `duration` of gameplay ticks.
+
+
 ### SCALE|{multiply}|{divide}|{duration}
 
 Durations are in in gameplay ticks. 35 ticks = one second.
