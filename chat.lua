@@ -6,7 +6,9 @@
 
 local chat_config = {
 	parser_interval = 5*TICRATE, -- how long to wait between attempts to parse commands
-	command_interval = 1 -- how long to wait between attempts to activate a command from the queue
+	command_interval = 1, -- how long to wait between attempts to activate a command from the queue
+	spawn_distance = 300*FRACUNIT, -- how far away to spawn objects from player
+	spawn_radius = 200*FRACUNIT -- radius to spawn objects within
 }
 
 local parser_timer = chat_config.parser_interval
@@ -292,7 +294,8 @@ end
 
 
 local spawn_object_with_message = function(player, username, message, namecolour, object_id, scale)
-	local dist = 300*FRACUNIT
+	local dist = chat_config.spawn_distance
+	local rrange = chat_config.spawn_radius
 	local x = FixedMul(cos(player.mo.angle), dist)
 	local y = FixedMul(sin(player.mo.angle), dist)
 
