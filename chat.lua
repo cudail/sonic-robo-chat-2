@@ -19,6 +19,7 @@ local spawned_list = {}
 local control_reverse_timer = 0
 local force_jump_timer = 0
 local speed_scale_timer = 0
+local jump_scale_timer = 0
 
 ---------------
 -- constants --
@@ -471,8 +472,8 @@ local process_command = function (command_string)
 			return false
 		end
 
-	--JUMP|{duration}
-	elseif commandname == "JUMP" then
+	--FORCE_JUMP|{duration}
+	elseif commandname == "FORCE_JUMP" then
 		local duration = tonumber(command[2])
 		if duration then
 			force_jump_timer = duration
@@ -486,8 +487,8 @@ local process_command = function (command_string)
 		player.mo.momx = - $1
 		player.mo.momy = - $1
 
-	--SPEED|{scale}|{duration}
-	elseif commandname == "SPEED" then
+	--SPEED_STATS|{scale}|{duration}
+	elseif commandname == "SPEED_STATS" then
 		local scale, duration = parseDecimal(command[2]), tonumber(command[3])
 		if scale == nil or duration == nil or scale < 1 or duration < 1 then
 			return false
@@ -500,6 +501,17 @@ local process_command = function (command_string)
 		player.mindash = FixedMul(skin.mindash, scale)
 		player.maxdash = FixedMul(skin.maxdash, scale)
 		player.thrustfactor = FixedMul(skin.thrustfactor, scale)
+
+	--JUMP_STATS|{scale}|{duration}
+	elseif commandname == "JUMP_STATS" then
+		local scale, duration = parseDecimal(command[2]), tonumber(command[3])
+		if scale == nil or duration == nil or scale < 1 or duration < 1 then
+			return false
+		end
+		jump_scale_timer = duration
+		local skin = skins[player.mo.skin]
+		player.jumpfactor = FixedMul(skin.jumpfactor, scale)
+
 
 	else
 		print("Unknown command "..command[1])
@@ -597,6 +609,14 @@ addHook("PreThinkFrame", function()
 		player.thrustfactor = skin.thrustfactor
 	elseif speed_scale_timer > 0 then
 		speed_scale_timer = $1 - 1
+	end
+
+	if jump_scale_timer == 1 then
+		jump_scale_timer = 0
+		local skin = skins[player.mo.skin]
+		player.jumpfactor = skin.jumpfactor
+	elseif jump_scale_timer > 0 then
+		jump_scale_timer = $1 - 1
 	end
 
 end)

@@ -76,14 +76,18 @@ Immediately turn the player 180°.
 Reverses the player's controls for the given `duration` of gameplay ticks.
 
 
-### JUMP|{duration}
+### FORCE_JUMP|{duration}
 
 Forces the player to constantly jump for the given `duration` of gameplay ticks.
 
 
-### SPEED|{scale}|{duration}
+### SPEED_STATS|{scale}|{duration}
 
 Scales the player's speed and acceleration stats by factor `scale` for the `duration` of gameplay ticks.
+
+### JUMP_STATS|{scale}|{duration}
+
+Scales the player's jump height by factor `scale` for the `duration` of gameplay ticks.
 
 
 ### SCALE|{multiply}|{divide}|{duration}
