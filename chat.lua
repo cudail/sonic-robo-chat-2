@@ -479,6 +479,12 @@ local process_command = function (command_string)
 			return false
 		end
 
+	--TURN
+	elseif commandname == "TURN" then
+		player.mo.angle = $1 + ANGLE_180
+		player.mo.momx = - $1
+		player.mo.momy = - $1
+
 	else
 		print("Unknown command "..command[1])
 	end
