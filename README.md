@@ -100,9 +100,9 @@ Scales the player's speed and acceleration stats by factor `scale` for the `dura
 Scales the player's jump height by factor `scale` for the `duration` of gameplay ticks.
 
 
-### SCALE|{multiply}|{divide}|{duration}
+### SCALE|{scale}|{duration}
 
-Durations are in in gameplay ticks. 35 ticks = one second.
+Scale the player character's size by factor `scale` for `duration` of gameplay ticks. Scale is a decimal value.
 
 
 ### CHARACTER|[palette]|[characterName]|[playerId]
