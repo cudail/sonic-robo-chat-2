@@ -25,22 +25,25 @@ pink, yellow, green, blue, red, grey, orange, sky, purple, aqua, peridot, azure,
 Durations are in in gameplay ticks. 35 ticks = one second.
 
 
-## CHARACTER|[palette]|[name]
+## CHARACTER|[palette]|[characterName]|[playerId]
 
-`name` is the name of the character to change to. E.g. `sonic`, `tails`, `knuckles`, `amy`, `fang` or `metalsonic`. If not specified then a random character other than the player's current one will be chosen.
+`characterName` is the name of the character to change to. E.g. `sonic`, `tails` or `knuckles`. If not specified then a random character other than the player's current one will be chosen.
 
 `palette` is the new colour palette. If not specified the palette will change to the default palette of character being changed to. If it is set to `random` then a random palette will be chosen from the list of all valid palettes. Otherwise it can be one of the following:
 
-white, bone, cloudy, grey, silver, carbon, jet, black, aether, slate, bluebell, pink, yogurt, brown, bronze, tan, beige, moss, azure, lavender, ruby, salmon, red, crimson, flame, ketchup, peachy, quail, sunset, copper, apricot, orange, rust, gold, sandy, yellow, olive, lime, peridot, apple, green, forest, emerald, mint, seafoam, aqua, teal, wave, cyan, sky, cerulean, icy, sapphire, cornflower, blue, cobalt, vapor, dusk, pastel, purple, bubblegum, magenta, neon, violet, lilac, plum, raspberry, rosy or random
+white, bone, cloudy, grey, silver, carbon, jet, black, aether, slate, bluebell, pink, yogurt, brown, bronze, tan, beige, moss, azure, lavender, ruby, salmon, red, crimson, flame, ketchup, peachy, quail, sunset, copper, apricot, orange, rust, gold, sandy, yellow, olive, lime, peridot, apple, green, forest, emerald, mint, seafoam, aqua, teal, wave, cyan, sky, cerulean, icy, sapphire, cornflower, blue, cobalt, vapor, dusk, pastel, purple, bubblegum, magenta, neon, violet, lilac, plum, raspberry, rosy
+
+`playerId` is the ID number of the player object to change. If not specified this will target player `0`, i.e. you. If you are start a game with Sonic and Tails you can target Tails/the follower character by setting this to `1` instead. Because this mod doesn't work with online games setting it to any other value will not be useful. You can't spawn an AI player after starting a game so if you want to be able to change the follower character make sure to start a game with Sonic and Tails.
 
 examples:
 
-`CHARACTER` will change to a random character with their normal palette
-`CHARACTER|gold` will change to a random character with a gold palette
-`CHARACTER|random` will change to a random character with a random palette
-`CHARACTER|amy` will change to Amy with her normal palette
-`CHARACTER|blue|knuckles` will change to a blue Knuckles
-`CHARACTER|random|tails` will change to Tails with a random palette
+`CHARACTER` will change the player to a random character with their normal palette
+`CHARACTER|gold` will change the player to a random character with a gold palette
+`CHARACTER|random` will change the player to a random character with a random palette
+`CHARACTER|amy` will change the player to Amy with her normal palette
+`CHARACTER|blue|knuckles` will change the player to a blue Knuckles
+`CHARACTER|random|tails` will change the player to Tails with a random palette
+`CHARACTER|red|sonic|1` will change the follower to a red Sonic
 
 
 ## SUPER|[give_emeralds]
