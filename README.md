@@ -41,6 +41,16 @@ Spawn a badnik in front of the player. The mod will try to pick one appropriate 
 `scale` is what scale to apply to the badnik. `1` will be normal sized, `0.5` will be half-sized, `2` will be double-sized, etc. Defaults to normal scale if not specified.
 
 
+### SPRING|{colour}|{orientation}|{direction}
+
+Spawns a spring directly on top of a player. Springs despawn after one second and don't display any message.
+
+`colour` is the type of spring to spawn. The three options are, in order of least to greatest force, `blue`, `yellow` and `red`.
+
+`orientation` can be `horizontal`, `vertical` or `diagonal`. Diagonal springs are angled upwards.
+
+`direction` is the direction the spring will point relative to the player. `front` springs push the player in direction they were already facing, `back` in the opposite direction and `left` and `right` push a player orthogonal to their original facing.
+
 
 ### MONITOR|{username}|{message}|{namecolour}|[set]
 

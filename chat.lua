@@ -419,14 +419,15 @@ local process_command = function (command_string)
 		print("Attempting to spawn monitor with object ID ".. monitor .." from set "..monitor_set.." with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'")
 		spawn_object_with_message(player, username, message, namecolour, monitor, FRACUNIT)
 
-	--SPRING|{colour}|{orientation}
+	--SPRING|{colour}|{orientation}|{direction}
 	elseif commandname == "SPRING" then
-		local colour, orientation = command[2], command[3]
+		local colour, orientation, direction = command[2], command[3], command[4]
 		if not colour then colour = "yellow" end
 		if not orientation then orientation = "vertical" end
+		if not direction then direction = "forward" end
 		local spring_type = springs[colour][orientation]
 		local spring = P_SpawnMobjFromMobj(player.mo, 0, 0, 0, spring_type)
-		spring.angle = player.mo.angle
+		spring.angle = player.mo.angle + ({forward = 0, left = ANGLE_90, back = ANGLE_180, right = ANGLE_270})[direction]
 		spring.life_timer = TICRATE
 		table.insert(spawned_spring_list, spring)
 
