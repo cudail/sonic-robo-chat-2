@@ -16,6 +16,7 @@ local command_timer = chat_config.command_interval
 local queue = {}
 local spawned_list = {}
 
+local control_reverse_timer = 0
 
 ---------------
 -- constants --
@@ -438,7 +439,7 @@ local process_command = function (command_string)
 		end
 		change_character(player, colour, skin)
 
-	--SUPER	[give_emeralds]
+	--SUPER|[give_emeralds]
 	elseif commandname == "SUPER" then
 		if skins[player.mo.skin].flags & SF_SUPER == 0 then
 			print(player.mo.skin .. " cannot go super.")
@@ -458,6 +459,17 @@ local process_command = function (command_string)
 		end
 		print("Forcing super")
 		P_DoSuperTransformation(player)
+
+	--REVERSE|{duration}
+	elseif commandname == "REVERSE" then
+		local duration = tonumber(command[2])
+		if duration then
+			control_reverse_timer = duration
+		else
+			return false
+		end
+
+
 	else
 		print("Unknown command "..command[1])
 	end
@@ -527,6 +539,13 @@ addHook("PreThinkFrame", function()
 		end
 	else
 		command_timer = $1 - 1
+	end
+
+	if control_reverse_timer > 0 then
+		control_reverse_timer = $1 - 1
+		player.cmd.forwardmove = - $1
+		player.cmd.sidemove = - $1
+		player.cmd.angleturn = - $1
 	end
 end)
 
