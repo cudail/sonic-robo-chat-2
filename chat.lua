@@ -15,6 +15,7 @@ local parser_timer = chat_config.parser_interval
 local command_timer = chat_config.command_interval
 local queue = {}
 local spawned_list = {}
+local spawned_spring_list = {}
 
 local control_reverse_timer = 0
 local force_jump_timer = 0
@@ -224,6 +225,11 @@ local chaosEmeralds = {
 	MT_EMERALD7
 }
 
+local springs = {
+	yellow = {vertical=MT_YELLOWSPRING, horizontal=MT_YELLOWHORIZ, diagonal=MT_YELLOWDIAG},
+	red = {vertical=MT_REDSPRING, horizontal=MT_REDHORIZ, diagonal=MT_REDDIAG},
+	blue = {vertical=MT_BLUESPRING, horizontal=MT_BLUEHORIZ, diagonal=MT_BLUEDIAG}
+}
 
 ---------------
 -- functions --
@@ -413,6 +419,16 @@ local process_command = function (command_string)
 		print("Attempting to spawn monitor with object ID ".. monitor .." from set "..monitor_set.." with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'")
 		spawn_object_with_message(player, username, message, namecolour, monitor, FRACUNIT)
 
+	--SPRING|{colour}|{orientation}
+	elseif commandname == "SPRING" then
+		local colour, orientation = command[2], command[3]
+		if not colour then colour = "yellow" end
+		if not orientation then orientation = "vertical" end
+		local spring_type = springs[colour][orientation]
+		local spring = P_SpawnMobjFromMobj(player.mo, 0, 0, 0, spring_type)
+		spring.angle = player.mo.angle
+		spring.life_timer = TICRATE
+		table.insert(spawned_spring_list, spring)
 
 	--SCALE|{scale}|{duration}
 	elseif commandname == "SCALE" then
@@ -555,6 +571,17 @@ addHook("PreThinkFrame", function()
 		end
 	end
 
+	for i, s in pairs(spawned_spring_list) do
+		if not s.valid then
+			table.remove(spawned_spring_list, i)
+		elseif s.life_timer < 1 then
+			P_KillMobj(s)
+			table.remove(spawned_spring_list, i)
+		else
+			s.life_timer = $1 - 1
+		end
+	end
+
 	table.sort(spawned_list, function(a, b)
 		return R_PointToDist(a.x, a.y) > R_PointToDist(b.x, b.y)
 	end)
@@ -577,8 +604,9 @@ addHook("PreThinkFrame", function()
 		command_timer = chat_config.command_interval
 
 		if queue and #queue > 0 then
-			process_command(queue[1])
+			local comm = queue[1]
 			table.remove(queue, 1)
+			process_command(comm)
 		end
 	else
 		command_timer = $1 - 1
