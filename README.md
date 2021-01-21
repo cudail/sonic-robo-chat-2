@@ -130,4 +130,12 @@ examples:
 if give_emeralds is true then the player will be granted all emeralds immediately. If the player does not have all the emeralds and give_emeralds is not true then this will have no effect. Can only be used by characters who have a super transformation (Sonic, Knuckles and Metal Sonic)
 
 
+### RING
+
+Give the player a ring.
+
+
+### UNRING
+
+Remove a ring from the player
 

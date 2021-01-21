@@ -529,6 +529,18 @@ local process_command = function (command_string)
 		local skin = skins[player.mo.skin]
 		player.jumpfactor = FixedMul(skin.jumpfactor, scale)
 
+	--RING
+	elseif commandname == "RING" then
+		S_StartSound(mo, sfx_itemup)
+		player.rings = $1 + 1
+
+	--UNRING
+	elseif commandname == "UNRING" then
+		S_StartSound(mo, sfx_spkdth)
+		if player.rings > 0 then
+			player.rings = $1 - 1
+		end
+
 
 	else
 		print("Unknown command "..command[1])
