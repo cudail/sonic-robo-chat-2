@@ -6,7 +6,7 @@ This mod reads commands from the file `[srb2_path]/luafiles/chat_commands.txt` a
 
 # Input sanitisation
 
-There is no way to escape `|` or linebreaks for the command parser so any pipes, `\n` and `\r` characterts should be stripped from all user input.
+There is no way to escape pipes or linebreaks for the command parser so any `|`, `\n` and `\r` characterts should be stripped from all user input.
 
 SRB2 can only display ASCII characters. Trying to display non-ASCII characters may have unexpected results. It will probably just result in messed up looking strings or nothing displaying at all, but it might be a good idea to strip all non-ASCII input anyway when writing to the command file.
 
