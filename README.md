@@ -113,7 +113,7 @@ Scale the player character's size by factor `scale` for `duration` of gameplay t
 
 white, bone, cloudy, grey, silver, carbon, jet, black, aether, slate, bluebell, pink, yogurt, brown, bronze, tan, beige, moss, azure, lavender, ruby, salmon, red, crimson, flame, ketchup, peachy, quail, sunset, copper, apricot, orange, rust, gold, sandy, yellow, olive, lime, peridot, apple, green, forest, emerald, mint, seafoam, aqua, teal, wave, cyan, sky, cerulean, icy, sapphire, cornflower, blue, cobalt, vapor, dusk, pastel, purple, bubblegum, magenta, neon, violet, lilac, plum, raspberry, rosy
 
-`playerId` is the ID number of the player object to change. If not specified this will target player `0`, i.e. you. If you are start a game with Sonic and Tails you can target Tails/the follower character by setting this to `1` instead. Because this mod doesn't work with online games setting it to any other value will not be useful. You can't spawn an AI player after starting a game so if you want to be able to change the follower character make sure to start a game with Sonic and Tails.
+`playerId` is the ID number of the player object to change. If not specified this will target player `0`, i.e. you. If you are start a game with Sonic and Tails you can target Tails/the follower character by setting this to `1` instead. Because this mod doesn't work with online games setting it to any other value will not be useful. You can't spawn an AI player after starting a game so if you want to be able to have a follower follower character make sure to start a game with Sonic and Tails.
 
 examples:
 
