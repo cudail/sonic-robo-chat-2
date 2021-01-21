@@ -260,6 +260,11 @@ local pick_badnik = function()
 end
 
 
+local isnumber = function(str)
+	return tonumber(str) ~= nil
+end
+
+
 local change_character = function(player, colour, skin)
 	if not skin then
 		local skintable = rand_entry(skins)
@@ -307,20 +312,24 @@ local process_command = function (command_string)
 		player.chat.scaletimer = $1 + dur
 		player.mo.destscale = parseDecimal(scale)
 
-	--CHARACTER|[colour]|[name]
+	--CHARACTER|[colour]|[character]|[playerId]
 	elseif commandname == "CHARACTER" then
-		local colour, skin
+		local colour, skin, playernum
 		if #command > 1 then
 			if command[2] == "random" then
 				colour = rand_dict_entry(skin_colours)
 			elseif skin_colours[command[2]] then
 				colour = skin_colours[command[2]]
-			elseif skins[command[2]] then
+			elseif not isnumber(command[2]) and skins[command[2]] then
 				skin = skins[command[2]]
 			end
-			if #command > 2 and skins[command[3]] then
+			if #command > 2 and not isnumber(command[3]) and skins[command[3]] then
 				skin = skins[command[3]].name
 			end
+			playernum = tonumber(command[#command])
+		end
+		if playernum ~= nil and players[playernum] then
+			player = players[playernum]
 		end
 		change_character(player, colour, skin)
 
