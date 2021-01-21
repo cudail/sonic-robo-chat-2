@@ -17,6 +17,7 @@ local queue = {}
 local spawned_list = {}
 
 local control_reverse_timer = 0
+local force_jump_timer = 0
 
 ---------------
 -- constants --
@@ -469,6 +470,14 @@ local process_command = function (command_string)
 			return false
 		end
 
+	--JUMP|{duration}
+	elseif commandname == "JUMP" then
+		local duration = tonumber(command[2])
+		if duration then
+			force_jump_timer = duration
+		else
+			return false
+		end
 
 	else
 		print("Unknown command "..command[1])
@@ -546,6 +555,13 @@ addHook("PreThinkFrame", function()
 		player.cmd.forwardmove = - $1
 		player.cmd.sidemove = - $1
 		player.cmd.angleturn = - $1
+	end
+
+	if force_jump_timer > 0 then
+		force_jump_timer = $1 - 1
+		if P_IsObjectOnGround(player.mo) then
+			P_DoJump(player)
+		end
 	end
 end)
 

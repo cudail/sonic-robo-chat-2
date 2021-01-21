@@ -71,6 +71,11 @@ Commands that affect the player directly. Many have a `duration`. Duration shoul
 Reverses the player's controls for the given `duration` of gameplay ticks.
 
 
+### JUMP|{duration}
+
+Forces the player to constantly jump for the given `duration` of gameplay ticks.
+
+
 ### SCALE|{multiply}|{divide}|{duration}
 
 Durations are in in gameplay ticks. 35 ticks = one second.
