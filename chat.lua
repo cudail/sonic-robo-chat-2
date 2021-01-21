@@ -46,6 +46,80 @@ level_list[22] = "eggrock"
 level_list[23] = "eggrock"
 level_list[23] = "eggrock"
 
+local monitor_sets = {
+	all = {MT_RING_BOX,
+		MT_SNEAKERS_BOX,
+		MT_INVULN_BOX,
+		MT_1UP_BOX,
+		MT_EGGMAN_BOX,
+		MT_MYSTERY_BOX,
+		MT_PITY_BOX,
+		MT_ATTRACT_BOX,
+		MT_FORCE_BOX,
+		MT_ARMAGEDDON_BOX,
+		MT_WHIRLWIND_BOX,
+		MT_ELEMENTAL_BOX,
+		MT_FLAMEAURA_BOX,
+		MT_BUBBLEWRAP_BOX,
+		MT_THUNDERCOIN_BOX},
+	allweighted = {MT_RING_BOX,
+		MT_SNEAKERS_BOX,
+		MT_INVULN_BOX,
+		MT_1UP_BOX,
+		MT_EGGMAN_BOX,
+		MT_MYSTERY_BOX,
+		{MT_PITY_BOX,
+		MT_ATTRACT_BOX,
+		MT_FORCE_BOX,
+		MT_ARMAGEDDON_BOX,
+		MT_WHIRLWIND_BOX,
+		MT_ELEMENTAL_BOX,
+		MT_FLAMEAURA_BOX,
+		MT_BUBBLEWRAP_BOX,
+		MT_THUNDERCOIN_BOX}},
+	good = {MT_RING_BOX,
+		MT_SNEAKERS_BOX,
+		MT_INVULN_BOX,
+		MT_1UP_BOX,
+		MT_MYSTERY_BOX,
+		MT_PITY_BOX,
+		MT_ATTRACT_BOX,
+		MT_FORCE_BOX,
+		MT_ARMAGEDDON_BOX,
+		MT_WHIRLWIND_BOX,
+		MT_ELEMENTAL_BOX,
+		MT_FLAMEAURA_BOX,
+		MT_BUBBLEWRAP_BOX,
+		MT_THUNDERCOIN_BOX},
+	goodweighted = {MT_RING_BOX,
+		MT_SNEAKERS_BOX,
+		MT_INVULN_BOX,
+		MT_1UP_BOX,
+		MT_MYSTERY_BOX,
+		{MT_PITY_BOX,
+		MT_ATTRACT_BOX,
+		MT_FORCE_BOX,
+		MT_ARMAGEDDON_BOX,
+		MT_WHIRLWIND_BOX,
+		MT_ELEMENTAL_BOX,
+		MT_FLAMEAURA_BOX,
+		MT_BUBBLEWRAP_BOX,
+		MT_THUNDERCOIN_BOX}},
+	ring = {MT_RING_BOX},
+	oneup = {MT_1UP_BOX},
+	eggman = {MT_EGGMAN_BOX},
+	mystery = {MT_MYSTERY_BOX},
+	shield = {MT_PITY_BOX,
+		MT_ATTRACT_BOX,
+		MT_FORCE_BOX,
+		MT_ARMAGEDDON_BOX,
+		MT_WHIRLWIND_BOX,
+		MT_ELEMENTAL_BOX,
+		MT_FLAMEAURA_BOX,
+		MT_BUBBLEWRAP_BOX,
+		MT_THUNDERCOIN_BOX}
+}
+
 local text_colours = {
 	pink = V_MAGENTAMAP,
 	yellow = V_YELLOWMAP,
@@ -310,7 +384,21 @@ local process_command = function (command_string)
 			scale = FRACUNIT
 		end
 		print("Attempting to spawn badnik with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'; and scale "..scale)
-		spawn_object_with_message(player, command[2], command[3], command[4], pick_badnik(), scale)
+		spawn_object_with_message(player, username, message, namecolour, pick_badnik(), scale)
+
+	--MONITOR|{username}|{message}|{namecolour}|[set]
+	elseif commandname == "MONITOR" then
+		local username , message, namecolour, monitor_set = command[2], command[3], command[4], command[5]
+		if monitor_set == nil then
+			monitor_set = "allweighted"
+		end
+		local monitor = rand_entry(monitor_sets[monitor_set])
+		if type(monitor) == "table" then
+			monitor = rand_entry(monitor)
+		end
+		print("Attempting to spawn monitor with object ID ".. monitor .." from set "..monitor_set.." with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'")
+		spawn_object_with_message(player, username, message, namecolour, monitor, FRACUNIT)
+
 
 	--SCALE|{scale}|{duration}
 	elseif commandname == "SCALE" then
