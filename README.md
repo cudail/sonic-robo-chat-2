@@ -14,18 +14,51 @@ SRB2 can only display ASCII characters. Trying to display non-ASCII characters m
 
 # Commands
 
-## BADNIK|{username}|{message}|{namecolour}
+## Object spawning
 
-namecolour is one of:
-pink, yellow, green, blue, red, grey, orange, sky, purple, aqua, peridot, azure, brown, rosy
+Spawned objects are intended to display a chat message from whoever spawned them hovering over them. All object spawning commands take a `username`, `message` and `namecolour`.
+
+`username` is intended to be the username of whoever sent the command in chat.
+
+`message` is the message that will be displayed over the spawned object.
+
+`namecolour` is the colour to highlight the user's name in. It can be one of pink, yellow, green, blue, red, grey, orange, sky, purple, aqua, peridot, azure, brown, rosy.
 
 
-##SCALE|{multiply}|{divide}|{duration}
+### BADNIK|{username}|{message}|{namecolour}|[scale]
+
+Spawn a badnik in front of the player. The mod will try to pick one appropriate to the current level.
+
+`scale` is what scale to apply to the badnik. `1` will be normal sized, `0.5` will be half-sized, `2` will be double-sized, etc. Defaults to normal scale if not specified.
+
+
+
+### MONITOR|{username}|{message}|{namecolour}|[set]
+
+Spawn an item monitor in front of the player.
+
+`set` is which set of monitors you want to spawn from. Defaults to `allweighted` if not specified. It can be one of the following:
+
+* `all` randomly spawn any monitor
+* `allweighted` randomly spawn any monitor, weighted so that shields do not dominate spawns. Default value
+* `good` randomly spawns a monitor other than an eggman monitor
+* `goodweighted` randomly spawns a monitor other than an eggman monitor, weighted so that shields do not dominate spawns
+* `ring` spawn a 10 ring monitor
+* `oneup` spawn an extra life monitor
+* `eggman` spawn an eggman monitor
+* `mystery` spawn a mystery monitor
+* `shield` spawn a shield monitor
+
+
+
+## Player commands
+
+### SCALE|{multiply}|{divide}|{duration}
 
 Durations are in in gameplay ticks. 35 ticks = one second.
 
 
-## CHARACTER|[palette]|[characterName]|[playerId]
+### CHARACTER|[palette]|[characterName]|[playerId]
 
 `characterName` is the name of the character to change to. E.g. `sonic`, `tails` or `knuckles`. If not specified then a random character other than the player's current one will be chosen.
 
@@ -46,7 +79,7 @@ examples:
 `CHARACTER|red|sonic|1` will change the follower to a red Sonic
 
 
-## SUPER|[give_emeralds]
+### SUPER|[give_emeralds]
 if give_emeralds is true then the player will be granted all emeralds immediately. If the player does not have all the emeralds and give_emeralds is not true then this will have no effect. Can only be used by characters who have a super transformation (Sonic, Knuckles and Metal Sonic)
 
 
