@@ -377,8 +377,15 @@ local process_command = function (command_string)
 	end
 	local player = players[0]
 	local commandname = command[1]
+
+	--OBJECT|{username}|{message}|{namecolour}|{objectid}
+	if commandname == "OBJECT" then
+		local username, message, namecolour, objectId = command[2], command[3], command[4], tonumber(command[5])
+		print("Attempting to spawn object with ID ".. objectId .." with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'")
+		spawn_object_with_message(player, username, message, namecolour, objectId, FRACUNIT)
+
 	--BADNIK|{username}|{message}|{namecolour}|[scale]
-	if commandname == "BADNIK" then
+	elseif commandname == "BADNIK" then
 		local username, message, namecolour, scale = command[2], command[3], command[4], parseDecimal(command[5])
 		if scale == nil then
 			scale = FRACUNIT

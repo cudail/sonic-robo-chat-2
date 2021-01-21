@@ -25,6 +25,15 @@ Spawned objects are intended to display a chat message from whoever spawned them
 `namecolour` is the colour to highlight the user's name in. It can be one of pink, yellow, green, blue, red, grey, orange, sky, purple, aqua, peridot, azure, brown, rosy.
 
 
+
+### OBJECT|{username}|{message}|{namecolour}|{objectId}
+
+Spawn a object of with with object type number `objectId` in front of the player. A list of objects and their IDs can be found here: https://wiki.srb2.org/wiki/List_of_Object_types
+
+Probably not a good idea to let people in chat enter an arbitrary object ID to spawn, but if you want to make something specific spawnable you can do it with this.
+
+
+
 ### BADNIK|{username}|{message}|{namecolour}|[scale]
 
 Spawn a badnik in front of the player. The mod will try to pick one appropriate to the current level.
