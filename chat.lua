@@ -607,11 +607,9 @@ addHook("PreThinkFrame", function()
 
 		local foundcommand = false
 		for line in file:lines() do
-			if #line > 0 then
-				table.insert(queue, line)
-				if not foundcommand then
-					foundcommand = true
-				end
+			table.insert(queue, line)
+			if not foundcommand then
+				foundcommand = true
 			end
 		end
 
