@@ -7,8 +7,8 @@
 local chat_config = {
 	parser_interval = 1*TICRATE, -- how long to wait between attempts to parse commands
 	command_interval = 1, -- how long to wait between attempts to activate a command from the queue
-	spawn_distance = 300*FRACUNIT, -- how far away to spawn objects from player
-	spawn_radius = 200*FRACUNIT -- radius to spawn objects within
+	spawn_distance = 300, -- how far away to spawn objects from player
+	spawn_radius = 200 -- radius to spawn objects within
 }
 
 local parser_timer = chat_config.parser_interval
@@ -27,9 +27,9 @@ local jump_scale_timer = 0
 ---------------
 
 local command_file_name = "chat_commands.txt"
+local config_file_name = "chat_config.cfg"
 
 local SPAWN_MESSAGE_TIMEOUT = TICRATE*60 --length of time to display messages over spawned objects
-
 
 local badnik_list = {
 	greenflower =  { MT_BLUECRAWLA, MT_REDCRAWLA, MT_GFZFISH},
@@ -235,7 +235,6 @@ local springs = {
 -- functions --
 ---------------
 
-
 local split = function(string, delimiter)
 	local list = {}
 	for token in string.gmatch(string, "[^"..delimiter.."]+") do
@@ -304,8 +303,8 @@ end
 
 
 local spawn_object_with_message = function(player, username, message, namecolour, object_id, scale)
-	local dist = chat_config.spawn_distance
-	local rrange = chat_config.spawn_radius
+	local dist = chat_config.spawn_distance*FRACUNIT
+	local rrange = chat_config.spawn_radius*FRACUNIT
 	local x = FixedMul(cos(player.mo.angle), dist)
 	local y = FixedMul(sin(player.mo.angle), dist)
 
@@ -356,6 +355,30 @@ end
 
 local isnumber = function(str)
 	return tonumber(str) ~= nil
+end
+
+
+local write_config = function()
+	local file = io.openlocal(config_file_name, "w+")
+	for k, v in pairs(chat_config) do
+		file:write(k .. " " .. chat_config[k] .. "\n")
+	end
+	file:close()
+end
+
+
+local read_config = function()
+	local file = io.openlocal(config_file_name, "r")
+	for line in file:lines() do
+		for k, v in pairs(chat_config) do
+			local config_match = line:match(k .. " (%d+)")
+			if isnumber(config_match) then
+				print("Found config value '"..k.."' with value "..config_match)
+				chat_config[k] = tonumber(config_match)
+			end
+		end
+	end
+	file:close()
 end
 
 
@@ -580,6 +603,8 @@ addHook("PreThinkFrame", function()
 
 	if player.chat == nil then
 		player.chat = {scaletimer = 0}
+		read_config()
+		--write_config()
 	end
 
 	if player.chat.scaletimer > 0 then

@@ -19,6 +19,26 @@ There is no way to escape pipes or linebreaks for the command parser so any `|`,
 SRB2 can only display ASCII characters. Trying to display non-ASCII characters may have unexpected results. It will probably just result in messed up looking strings or nothing displaying at all, but it might be a good idea to strip all non-ASCII input anyway when writing to the command file.
 
 
+# Config
+
+The file `[srb2_path]/luafiles/chat_config.cfg` can be used to configure some settings. These are read only when first starting a game, editing mid-game won't have any effect. The format and default values for all the config file are as follows:
+
+```
+command_interval 1
+parser_interval 35
+spawn_distance 300
+spawn_radius 200
+```
+
+The `command_interval` is how often, in game ticks, a command is pulled from the current command queue to be executed. Increase this to give breathing room between commands executing. 35 ticks is equal to one second.
+
+The `parser_interval` is how often the command file is read and commands are added to the queue. The default value for this is 35 ticks which equals one second.
+
+The `spawn_distance` is how far in front of the player spawned objects like badniks and monitors will appear in in-game units. For reference Sonic is 48 units tall.
+
+The `spawn_radius` is the radius within which spawned objects will appear. Decrease this to make things spawn clustered closer together. Increase it to spread them out. Technically not a radius as it just offsets the X, Y value of the spawn, so objects spawn within a square aligned to the cardinal directions.
+
+
 
 # Commands
 
