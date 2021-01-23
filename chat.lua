@@ -46,11 +46,7 @@ local badnik_list = {
 	eggrock = {MT_JETTBOMBER, MT_JETTGUNNER, MT_POPUPTURRET, MT_SPINCUSHION, MT_SNAILER}
 }
 
-local chat_messages = {
-	{ username = "oakreef", message = "hello chess", colour = V_MAGENTAMAP, timer = 70},
-	{ username = "evan", message = "first time donator", colour = V_MAGENTAMAP, timer = 105}
-}
---local chat_lines = {}
+local chat_lines = {}
 
 local level_list = {
 	"greenflower", "greenflower", "greenflower",
@@ -479,6 +475,10 @@ local process_command = function (command_string)
 	--CHAT|{username}|{message}|{namecolour}
 	elseif commandname == "CHAT" then
 		local username, message, namecolour = command[2], command[3], command[4]
+		username = username or ""
+		message = message or ""
+		namecolour = text_colours[namecolour] or V_YELLOWMAP
+		table.insert(chat_messages, {username=username, message=message, colour=namecolour, timer=chat_config.chat_timeout})
 
 	--SCALE|{scale}|{duration}
 	elseif commandname == "SCALE" then
