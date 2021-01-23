@@ -394,15 +394,23 @@ local process_command = function (command_string)
 	--OBJECT|{username}|{message}|{namecolour}|{objectid}
 	if commandname == "OBJECT" then
 		local username, message, namecolour, objectId = command[2], command[3], command[4], tonumber(command[5])
+		if not objectId then
+			print("No object ID for OBJECT command")
+			return false
+		end
+		if not username then username = "" end
+		if not message then message = "" end
+		if not namecolour then namecolour = "yellow" end
 		print("Attempting to spawn object with ID ".. objectId .." with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'")
 		spawn_object_with_message(player, username, message, namecolour, objectId, FRACUNIT)
 
 	--BADNIK|{username}|{message}|{namecolour}|[scale]
 	elseif commandname == "BADNIK" then
 		local username, message, namecolour, scale = command[2], command[3], command[4], parseDecimal(command[5])
-		if scale == nil then
-			scale = FRACUNIT
-		end
+		if not username then username = "" end
+		if not message then message = "" end
+		if not namecolour then namecolour = "yellow" end
+		if not scale then scale = FRACUNIT end
 		print("Attempting to spawn badnik with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'; and scale "..scale)
 		spawn_object_with_message(player, username, message, namecolour, pick_badnik(), scale)
 
@@ -436,6 +444,8 @@ local process_command = function (command_string)
 	--SCALE|{scale}|{duration}
 	elseif commandname == "SCALE" then
 		local scale, dur = command[2], command[3]
+		if not scale then return false end
+		if not duration then return false end
 		print("Attemtping to scale player by "..scale.." for "..dur.." ticks")
 		player.chat.scaletimer = $1 + dur
 		player.mo.destscale = parseDecimal(scale)
