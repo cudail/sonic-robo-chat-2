@@ -8,7 +8,11 @@ local chat_config = {
 	parser_interval = 1*TICRATE, -- how long to wait between attempts to parse commands
 	command_interval = 1, -- how long to wait between attempts to activate a command from the queue
 	spawn_distance = 300, -- how far away to spawn objects from player
-	spawn_radius = 200 -- radius to spawn objects within
+	spawn_radius = 200, -- radius to spawn objects within
+	chat_x_pox = 5,
+	chat_y_pos = 60,
+	chat_width = 60,
+	chat_lines = 60
 }
 
 local parser_timer = chat_config.parser_interval
@@ -40,6 +44,9 @@ local badnik_list = {
 	redvolcano = {MT_UNIDUS, MT_PTERABYTE, MT_PYREFLY, MT_DRAGONBOMBER},
 	eggrock = {MT_JETTBOMBER, MT_JETTGUNNER, MT_POPUPTURRET, MT_SPINCUSHION, MT_SNAILER}
 }
+
+--local chat_lines = { {"oakreef", "hello chess", V_MAGENTAMAP, 35}, {"evan","first time don", V_MAGENTAMAP, 400} }
+local chat_lines = {}
 
 local level_list = {
 	"greenflower", "greenflower", "greenflower",
@@ -465,6 +472,10 @@ local process_command = function (command_string)
 		spring.life_timer = TICRATE
 		table.insert(spawned_spring_list, spring)
 
+	--CHAT|{username}|{message}|{namecolour}
+	elseif commandname == "CHAT" then
+		local username, message, namecolour = command[2], command[3], command[4]
+
 	--SCALE|{scale}|{duration}
 	elseif commandname == "SCALE" then
 		local scale, dur = command[2], command[3]
@@ -725,7 +736,29 @@ addHook("PreThinkFrame", function()
 
 end)
 
+hud.add( function(v, player, camera)
+	for i, m in pairs(chat_lines) do
+		local name = m[1]
+		local message = m[2]
+		local colour = m[3]
+		local timer = m[4]
+		local messageflags = V_SNAPTOLEFT|V_SNAPTOTOP
+		local font = "small"
+		local lineheight = 4
 
+		local nameflags = V_SNAPTOLEFT|V_SNAPTOTOP|colour
+
+		local nametext = name .. ": "
+
+		local namewidth = v.stringWidth(nametext, nameflags, "small")
+
+		local x = chat_config.chat_x_pox
+		local y = chat_config.chat_y_pos+i*lineheight
+
+		v.drawString(x, y, nametext, nameflags, font)
+		v.drawString(x+namewidth, y, message, messageflags, font)
+	end
+end, "game")
 
 hud.add( function(v, player, camera)
 	local first_person = not camera.chase
