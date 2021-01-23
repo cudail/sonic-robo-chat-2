@@ -12,7 +12,8 @@ local chat_config = {
 	chat_x_pox = 5,
 	chat_y_pos = 60,
 	chat_width = 60,
-	chat_lines = 60
+	chat_lines = 60,
+	chat_timeout = TICRATE*5
 }
 
 local parser_timer = chat_config.parser_interval
@@ -45,8 +46,11 @@ local badnik_list = {
 	eggrock = {MT_JETTBOMBER, MT_JETTGUNNER, MT_POPUPTURRET, MT_SPINCUSHION, MT_SNAILER}
 }
 
---local chat_lines = { {"oakreef", "hello chess", V_MAGENTAMAP, 35}, {"evan","first time don", V_MAGENTAMAP, 400} }
-local chat_lines = {}
+local chat_messages = {
+	{ username = "oakreef", message = "hello chess", colour = V_MAGENTAMAP, timer = 70},
+	{ username = "evan", message = "first time donator", colour = V_MAGENTAMAP, timer = 105}
+}
+--local chat_lines = {}
 
 local level_list = {
 	"greenflower", "greenflower", "greenflower",
@@ -661,6 +665,17 @@ addHook("PreThinkFrame", function()
 		end
 	end
 
+	i = 1
+	while i <= #chat_messages do
+		local message = chat_messages[i]
+		if message.timer < 1 then
+			table.remove(chat_messages, i)
+		else
+			message.timer = $1 - 1
+			i = $1+1
+		end
+	end
+
 	table.sort(spawned_list, function(a, b)
 		return R_PointToDist(a.x, a.y) > R_PointToDist(b.x, b.y)
 	end)
@@ -739,11 +754,10 @@ addHook("PreThinkFrame", function()
 end)
 
 hud.add( function(v, player, camera)
-	for i, m in pairs(chat_lines) do
-		local name = m[1]
-		local message = m[2]
-		local colour = m[3]
-		local timer = m[4]
+	for i, m in pairs(chat_messages) do
+		local name = m.username
+		local message = m.message
+		local colour = m.colour
 		local messageflags = V_SNAPTOLEFT|V_SNAPTOTOP
 		local font = "small"
 		local lineheight = 4
