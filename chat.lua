@@ -5,7 +5,7 @@
 
 
 local chat_config = {
-	parser_interval = 5*TICRATE, -- how long to wait between attempts to parse commands
+	parser_interval = 1*TICRATE, -- how long to wait between attempts to parse commands
 	command_interval = 1, -- how long to wait between attempts to activate a command from the queue
 	spawn_distance = 300*FRACUNIT, -- how far away to spawn objects from player
 	spawn_radius = 200*FRACUNIT -- radius to spawn objects within
@@ -605,10 +605,22 @@ addHook("PreThinkFrame", function()
 
 		local file = io.openlocal(command_file_name, "r")
 
+		local foundcommand = false
 		for line in file:lines() do
-			table.insert(queue, line)
+			if #line > 0 then
+				table.insert(queue, line)
+				if not foundcommand then
+					foundcommand = true
+				end
+			end
 		end
-		io.openlocal(command_file_name, "w+")
+
+		if foundcommand then
+			print("Read commands in from command file, wiping it.")
+			io.openlocal(command_file_name, "w+")
+		else
+			print("No commands added to queue")
+		end
 	else
 		parser_timer = $1 - 1
 	end
