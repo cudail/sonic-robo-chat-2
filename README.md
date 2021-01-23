@@ -21,7 +21,7 @@ SRB2 can only display ASCII characters. Trying to display non-ASCII characters m
 
 # Config
 
-The file `[srb2_path]/luafiles/chat_config.cfg` can be used to configure some settings. These are read only when first starting a game, editing mid-game won't have any effect. The format and default values for all the config file are as follows:
+The file `[srb2_path]/luafiles/chat_config.cfg` can be used to configure some settings. These are read only when first starting a game, editing mid-game won't have any effect. To change the config mid-game use the `CONFIG` command described below. The format and default values for all the config file are as follows:
 
 ```
 command_interval 1
@@ -41,6 +41,12 @@ The `spawn_radius` is the radius within which spawned objects will appear. Decre
 
 
 # Commands
+
+
+### CONFIG|{setting}|{value}
+
+Set a value for one of the settings `command_interval`, `parser_interval`, `spawn_distance` or `spawn_radius` as described above. This will cause the current config to be written to `chat_config.cfg` so that it will persist next time you play.
+
 
 ## Object spawning
 

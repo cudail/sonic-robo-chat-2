@@ -576,6 +576,15 @@ local process_command = function (command_string)
 			player.rings = $1 - 1
 		end
 
+	--CONFIG
+	elseif commandname == "CONFIG" then
+		local setting, value = command[2], tonumber(command[3])
+		if not setting then return false end
+		if not value then return false end
+		if not chat_config[setting] then return false end
+		print("Updating config setting '"..setting.."' to "..value)
+		chat_config[setting] = value
+		write_config()
 
 	else
 		print("Unknown command "..command[1])
