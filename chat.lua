@@ -335,6 +335,7 @@ local spawn_object_with_message = function(player, username, message, namecolour
 			spawned.chat.text[#spawned.chat.text] = last(spawned.chat.text) .. " " .. words[i]
 		end
 	end
+	S_StartSound(mo, sfx_s3kcas)
 
 	table.insert(spawned_list, spawned)
 end
