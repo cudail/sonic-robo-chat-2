@@ -581,6 +581,10 @@ addHook("PreThinkFrame", function()
 	for i, b in pairs(spawned_list) do
 		if not b.valid or b.chat.timer > SPAWN_MESSAGE_TIMEOUT then
 			table.remove(spawned_list, i)
+		elseif b.type > 155 and b.type < 211 then --is an item box
+			if b.state == S_BOX_POP2 then
+				table.remove(spawned_list, i)
+			end
 		else
 			b.chat.timer = $1+1
 		end
