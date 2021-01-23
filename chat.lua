@@ -647,8 +647,9 @@ addHook("PreThinkFrame", function()
 		end
 	end
 
-
-	for i, s in pairs(spawned_spring_list) do
+	i = 1
+	while i <= #spawned_spring_list do
+		local s = spawned_spring_list[i]
 		if not s.valid then
 			table.remove(spawned_spring_list, i)
 		elseif s.life_timer < 1 then
@@ -656,6 +657,7 @@ addHook("PreThinkFrame", function()
 			table.remove(spawned_spring_list, i)
 		else
 			s.life_timer = $1 - 1
+			i = $1+1
 		end
 	end
 
