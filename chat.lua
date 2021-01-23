@@ -409,13 +409,15 @@ local process_command = function (command_string)
 	--MONITOR|{username}|{message}|{namecolour}|[set]
 	elseif commandname == "MONITOR" then
 		local username , message, namecolour, monitor_set = command[2], command[3], command[4], command[5]
-		if monitor_set == nil then
-			monitor_set = "allweighted"
-		end
+		if not username then username = "" end
+		if not message then message = "" end
+		if not namecolour then namecolour = "yellow" end
+		if not monitor_set then	monitor_set = "allweighted" end
 		local monitor = rand_entry(monitor_sets[monitor_set])
 		if type(monitor) == "table" then
 			monitor = rand_entry(monitor)
 		end
+		if not monitor then monitor = MT_RING_BOX end
 		print("Attempting to spawn monitor with object ID ".. monitor .." from set "..monitor_set.." with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'")
 		spawn_object_with_message(player, username, message, namecolour, monitor, FRACUNIT)
 
