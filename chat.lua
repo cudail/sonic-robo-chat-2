@@ -622,17 +622,19 @@ addHook("PreThinkFrame", function()
 		player.mo.destscale = FRACUNIT
 	end
 
-	for i, b in pairs(spawned_list) do
+	local i = 1
+	while i <= #spawned_list do
+		local b = spawned_list[i]
 		if not b.valid or b.chat.timer > SPAWN_MESSAGE_TIMEOUT then
 			table.remove(spawned_list, i)
-		elseif b.type > 155 and b.type < 211 then --is an item box
-			if b.state == S_BOX_POP2 then
-				table.remove(spawned_list, i)
-			end
+		elseif b.type > 155 and b.type < 211 and b.state == S_BOX_POP2 then --is a destroyed item box
+			table.remove(spawned_list, i)
 		else
 			b.chat.timer = $1+1
+			i = $1+1
 		end
 	end
+
 
 	for i, s in pairs(spawned_spring_list) do
 		if not s.valid then
