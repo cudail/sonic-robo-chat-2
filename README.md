@@ -4,6 +4,14 @@
 This mod reads commands from the file `[srb2_path]/luafiles/chat_commands.txt` and executes them. Each new line in the file is taken to be a single command. The mod reads the entire file at once, adds the commands to a queue, and then deletes the contents of the file. Commands consist of an all-caps command name followed by parameters which are delimited by `|` characters. Parameters are case sensitive. Generally command names are uppercase and parameters are lowercase. Commands and parameters are trimmed for spaces (but not other forms of whitespace) when parsed. `CHARACTER|sonic` and ` CHARACTER  |  sonic ` are equivalent.
 
 
+# Writing to the command file
+
+The mod attempts to read from the file `[srb2_path]/luafiles/chat_commands.txt` once every second. If it finds any non-empty lines it reads them into a queue and then wipes the file. If it finds nothing take in it won't bother trying to overwrite the command file. The reading in of commands and wiping of the file are two separate operations. They should happen immediately after each other, but it's possible that a command could be written to the file between the read and write operation, which means it would be missed.
+
+The Lua IO library that SRB2 exposes is very limited and cannot put a lock on a file, delete or rename a file. This means options for preventing missed commands are limited. As a way to minimise it I would suggest having the parser client that's writing to the command file not write commands immediately when they come in. Instead add them to a queue. Then periodically check if the command file is empty. If it is not empty then do not write to it and wait until the mod reads from it and wipes it. If it is empty then write all queued commands to it at once.
+
+
+
 # Input sanitisation
 
 There is no way to escape pipes or linebreaks for the command parser so any `|`, `\n` and `\r` characterts should be stripped from all user input.
