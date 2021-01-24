@@ -13,7 +13,7 @@ local chat_config = {
 	chat_y_pos = 58,
 	chat_width = 100,
 	chat_lines = 20,
-	chat_timeout = TICRATE*5
+	chat_timeout = TICRATE*10
 }
 
 local parser_timer = chat_config.parser_interval
@@ -473,7 +473,7 @@ local process_command = function (command_string)
 	elseif commandname == "CHAT" then
 		local username = command[2] or ""
 		local message = command[3] or ""
-		local namecolour = text_colours[namecolour] or V_YELLOWMAP
+		local namecolour = text_colours[command[4]] or V_YELLOWMAP
 		table.insert(chat_messages, {username=username, message=message, colour=namecolour, timer=chat_config.chat_timeout})
 
 	--SCALE|{scale}|{duration}
@@ -777,8 +777,8 @@ hud.add( function(v, player, camera)
 		message.timer = $1 - 1
 
 		local name = message.username
-		local message = message.message
-		local colour = message.colour or V_YELLOWMAP --TODO: this should never be nil but is for some reason?
+		local text = message.message
+		local colour = message.colour
 
 		local messageflags = V_SNAPTOLEFT|V_SNAPTOTOP
 		local nameflags = V_SNAPTOLEFT|V_SNAPTOTOP|colour
@@ -790,7 +790,7 @@ hud.add( function(v, player, camera)
 		local x = chat_config.chat_x_pos
 		local y = chat_config.chat_y_pos+i*lineheight
 
-		local text_lines = break_into_lines(v, message, chat_config.chat_width, messageflags, namewidth)
+		local text_lines = break_into_lines(v, text, chat_config.chat_width, messageflags, namewidth)
 
 
 		l = $1 - 1
