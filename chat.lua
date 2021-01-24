@@ -3,16 +3,15 @@
 -- variables --
 ---------------
 
-
 local chat_config = {
 	parser_interval = 1*TICRATE, -- how long to wait between attempts to parse commands
 	command_interval = 1, -- how long to wait between attempts to activate a command from the queue
 	spawn_distance = 300, -- how far away to spawn objects from player
 	spawn_radius = 200, -- radius to spawn objects within
 	chat_x_pos = 1,
-	chat_y_pos = 58,
-	chat_width = 100,
-	chat_lines = 20,
+	chat_y_pos = 54,
+	chat_width = 120,
+	chat_lines = 29,
 	chat_timeout = TICRATE*10
 }
 
@@ -769,36 +768,25 @@ end)
 hud.add( function(v, player, camera)
 	local font = "small-thin"
 	local lineheight = 4
-
-
+	local messageflags = V_SNAPTOLEFT|V_SNAPTOTOP
 	local i, l = 1, 0
 	while l < chat_config.chat_lines and i <= #chat_messages do
 		local message = chat_messages[i]
 		message.timer = $1 - 1
-
 		local name = message.username
 		local text = message.message
 		local colour = message.colour
-
-		local messageflags = V_SNAPTOLEFT|V_SNAPTOTOP
 		local nameflags = V_SNAPTOLEFT|V_SNAPTOTOP|colour
-
 		local nametext = name .. ": "
-
 		local namewidth = v.stringWidth(nametext, nameflags, "thin")/2
-
 		local x = chat_config.chat_x_pos
-		local y = chat_config.chat_y_pos+i*lineheight
-
+		local y = chat_config.chat_y_pos+l*lineheight
 		local text_lines = break_into_lines(v, text, chat_config.chat_width, messageflags, namewidth)
-
-
-		l = $1 - 1
-
-		v.drawString(x, y+(l-1)*4, nametext, nameflags, font)
+		v.drawString(x, y, nametext, nameflags, font)
 		for j, line in pairs(text_lines) do
-			v.drawString(x+(j==1 and namewidth or 0), y+(l-1)*4, line, messageflags, font)
+			v.drawString(x+(j==1 and namewidth or 0), y, line, messageflags, font)
 			l = $1 + 1
+			y = chat_config.chat_y_pos+l*lineheight
 		end
 		i = $1 + 1
 	end
