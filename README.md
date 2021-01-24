@@ -33,6 +33,7 @@ chat_y_pos 54
 chat_width 120
 chat_lines 29
 chat_timeout 350
+log 0
 ```
 
 The `command_interval` is how often, in game ticks, a command is pulled from the current command queue to be executed. Increase this to give breathing room between commands executing. 35 ticks is equal to one second.
@@ -50,6 +51,8 @@ The `chat_width` is the max width in pixels (not characters) for the chat displa
 The `chat_lines` is the max number of lines to display for the chat. If the last message is longer than one line it will overflow this a little.
 
 The `chat_timeout` is how long a given message will be diplayed on screen.
+
+The `log` controls debug logging for the mod. The default value of `0` will result in no logging. `1` will log to the in-game console. `2` will log to `luafiles/chat_log.txt`.
 
 
 

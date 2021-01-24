@@ -12,7 +12,8 @@ local chat_config = {
 	chat_y_pos = 54,
 	chat_width = 120,
 	chat_lines = 29,
-	chat_timeout = TICRATE*10
+	chat_timeout = TICRATE*10,
+	log = 0
 }
 
 local parser_timer = chat_config.parser_interval
@@ -32,6 +33,7 @@ local jump_scale_timer = 0
 
 local command_file_name = "chat_commands.txt"
 local config_file_name = "chat_config.cfg"
+local log_file_name = "chat_log.txt"
 
 local SPAWN_MESSAGE_TIMEOUT = TICRATE*60 --length of time to display messages over spawned objects
 
@@ -243,6 +245,17 @@ local springs = {
 -- functions --
 ---------------
 
+
+local log = function(message)
+	if chat_config.log == 1 then
+		print(message)
+	elseif chat_config.log == 2 then
+		local file = io.openlocal(log_file_name, "a")
+		file:write(message .. "\n")
+		file:close()
+	end
+end
+
 local split = function(string, delimiter)
 	local list = {}
 	for token in string.gmatch(string, "[^"..delimiter.."]+") do
@@ -382,7 +395,7 @@ local read_config = function()
 		for k, v in pairs(chat_config) do
 			local config_match = line:match(k .. " (%d+)")
 			if isnumber(config_match) then
-				print("Found config value '"..k.."' with value "..config_match)
+				log("Found config value '"..k.."' with value "..config_match)
 				chat_config[k] = tonumber(config_match)
 			end
 		end
@@ -429,7 +442,7 @@ end
 
 
 local process_command = function (command_string)
-	print("Trying to process command: " .. command_string )
+	log("Trying to process command: " .. command_string )
 	local command = split(command_string, "|")
 	if not command or #command == 0 then
 		return
@@ -447,10 +460,10 @@ local process_command = function (command_string)
 		local namecolour = command[4] or "yellow"
 		local objectId = tonumber(command[5])
 		if not objectId then
-			print("No object ID for OBJECT command")
+			log("No object ID for OBJECT command")
 			return false
 		end
-		print("Attempting to spawn object with ID ".. objectId .." with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'")
+		log("Attempting to spawn object with ID ".. objectId .." with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'")
 		spawn_object_with_message(player, username, message, namecolour, objectId, FRACUNIT)
 
 	--BADNIK|{username}|{message}|{namecolour}|[scale]
@@ -459,7 +472,7 @@ local process_command = function (command_string)
 		local message = command[3] or ""
 		local namecolour = command[4] or "yellow"
 		local scale = parseDecimal(command[5]) or FRACUNIT
-		print("Attempting to spawn badnik with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'; and scale "..scale)
+		log("Attempting to spawn badnik with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'; and scale "..scale)
 		spawn_object_with_message(player, username, message, namecolour, pick_badnik(), scale)
 
 	--MONITOR|{username}|{message}|{namecolour}|[set]
@@ -473,7 +486,7 @@ local process_command = function (command_string)
 			monitor = rand_entry(monitor)
 		end
 		if not monitor then monitor = MT_RING_BOX end
-		print("Attempting to spawn monitor with object ID ".. monitor .." from set "..monitor_set.." with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'")
+		log("Attempting to spawn monitor with object ID ".. monitor .." from set "..monitor_set.." with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'")
 		spawn_object_with_message(player, username, message, namecolour, monitor, FRACUNIT)
 
 	--SPRING|{colour}|{orientation}|{direction}
@@ -499,7 +512,7 @@ local process_command = function (command_string)
 		local scale, dur = command[2], command[3]
 		if not scale then return false end
 		if not duration then return false end
-		print("Attemtping to scale player by "..scale.." for "..dur.." ticks")
+		log("Attemtping to scale player by "..scale.." for "..dur.." ticks")
 		player.chat.scaletimer = $1 + dur
 		player.mo.destscale = parseDecimal(scale)
 
@@ -527,22 +540,22 @@ local process_command = function (command_string)
 	--SUPER|[give_emeralds]
 	elseif commandname == "SUPER" then
 		if skins[player.mo.skin].flags & SF_SUPER == 0 then
-			print(player.mo.skin .. " cannot go super.")
+			log(player.mo.skin .. " cannot go super.")
 			return false
 		end
 
 		if not All7Emeralds(emeralds) then
 			if command[2] == "true" then
-				print("granting emeralds")
+				log("granting emeralds")
 				for i = 1, #chaosEmeralds do
 					P_SpawnMobj(player.mo.x, player.mo.y, player.mo.z, chaosEmeralds[i])
 				end
 			else
-				print("player does not have emeralds, cannot go super")
+				log("player does not have emeralds, cannot go super")
 				return false
 			end
 		end
-		print("Forcing super")
+		log("Forcing super")
 		P_DoSuperTransformation(player)
 
 	--REVERSE|{duration}
@@ -612,12 +625,12 @@ local process_command = function (command_string)
 		if not setting then return false end
 		if not value then return false end
 		if not chat_config[setting] then return false end
-		print("Updating config setting '"..setting.."' to "..value)
+		log("Updating config setting '"..setting.."' to "..value)
 		chat_config[setting] = value
 		write_config()
 
 	else
-		print("Unknown command "..command[1])
+		log("Unknown command "..command[1])
 	end
 end
 
@@ -708,10 +721,10 @@ addHook("PreThinkFrame", function()
 		end
 
 		if foundcommand then
-			print("Read commands in from command file, wiping it.")
+			log("Read commands in from command file, wiping it.")
 			io.openlocal(command_file_name, "w+")
 		else
-			print("No commands added to queue")
+			log("No commands added to queue")
 		end
 	else
 		parser_timer = $1 - 1
