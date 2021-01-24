@@ -9,10 +9,10 @@ local chat_config = {
 	command_interval = 1, -- how long to wait between attempts to activate a command from the queue
 	spawn_distance = 300, -- how far away to spawn objects from player
 	spawn_radius = 200, -- radius to spawn objects within
-	chat_x_pox = 5,
-	chat_y_pos = 60,
-	chat_width = 60,
-	chat_lines = 60,
+	chat_x_pos = 1,
+	chat_y_pos = 58,
+	chat_width = 100,
+	chat_lines = 20,
 	chat_timeout = TICRATE*5
 }
 
@@ -331,7 +331,6 @@ local spawn_object_with_message = function(player, username, message, namecolour
 	spawned.chat.timer = 0
 	spawned.chat.text = {}
 	local words = split(message, " ")
-	local current_length = 0
 	for i = 1, #words do
 		if #(spawned.chat.text) == 0 then
 			spawned.chat.text = {words[i]}
@@ -668,7 +667,6 @@ addHook("PreThinkFrame", function()
 		if message.timer < 1 then
 			table.remove(chat_messages, i)
 		else
-			message.timer = $1 - 1
 			i = $1+1
 		end
 	end
@@ -750,26 +748,59 @@ addHook("PreThinkFrame", function()
 
 end)
 
-hud.add( function(v, player, camera)
-	for i, m in pairs(chat_messages) do
-		local name = m.username
-		local message = m.message
-		local colour = m.colour
-		local messageflags = V_SNAPTOLEFT|V_SNAPTOTOP
-		local font = "small"
-		local lineheight = 4
 
+local break_into_lines = function(view, message, max_width, flags, name_width)
+	local text_lines = {}
+	local words = split(message, " ")
+	for i, word in pairs(words) do
+		local this_line = text_lines[#text_lines]
+		if #(text_lines) == 0 then
+			text_lines = {word}
+		elseif view.stringWidth(this_line .. " " .. word, flags, thin)/2 + (i==1 and name_width or 0) > chat_config.chat_width then
+			table.insert(text_lines, word)
+		else
+			text_lines[#text_lines] = $1 .. " " .. word
+		end
+	end
+	return text_lines
+end
+
+
+hud.add( function(v, player, camera)
+	local font = "small-thin"
+	local lineheight = 4
+
+
+	local i, l = 1, 0
+	while l < chat_config.chat_lines and i <= #chat_messages do
+		local message = chat_messages[i]
+		message.timer = $1 - 1
+
+		local name = message.username
+		local message = message.message
+		local colour = message.colour or V_YELLOWMAP --TODO: this should never be nil but is for some reason?
+
+		local messageflags = V_SNAPTOLEFT|V_SNAPTOTOP
 		local nameflags = V_SNAPTOLEFT|V_SNAPTOTOP|colour
 
 		local nametext = name .. ": "
 
-		local namewidth = v.stringWidth(nametext, nameflags, "small")
+		local namewidth = v.stringWidth(nametext, nameflags, "thin")/2
 
-		local x = chat_config.chat_x_pox
+		local x = chat_config.chat_x_pos
 		local y = chat_config.chat_y_pos+i*lineheight
 
-		v.drawString(x, y, nametext, nameflags, font)
-		v.drawString(x+namewidth, y, message, messageflags, font)
+		local text_lines = break_into_lines(v, message, chat_config.chat_width, messageflags, namewidth)
+
+
+		l = $1 - 1
+
+		v.drawString(x, y+(l-1)*4, nametext, nameflags, font)
+		for j, line in pairs(text_lines) do
+			v.drawString(x+(j==1 and namewidth or 0), y+(l-1)*4, line, messageflags, font)
+			l = $1 + 1
+		end
+		i = $1 + 1
 	end
 end, "game")
 
