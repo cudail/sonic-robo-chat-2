@@ -390,6 +390,23 @@ local read_config = function()
 end
 
 
+local break_into_lines = function(view, message, max_width, flags, name_width)
+	local text_lines = {}
+	local words = split(message, " ")
+	for i, word in pairs(words) do
+		local this_line = text_lines[#text_lines]
+		if #(text_lines) == 0 then
+			text_lines = {word}
+		elseif view.stringWidth(this_line .. " " .. word, flags, thin)/2 + (i==1 and name_width or 0) > chat_config.chat_width then
+			table.insert(text_lines, word)
+		else
+			text_lines[#text_lines] = $1 .. " " .. word
+		end
+	end
+	return text_lines
+end
+
+
 local change_character = function(player, colour, skin)
 	if not skin then
 		local skintable = rand_entry(skins)
@@ -747,23 +764,6 @@ addHook("PreThinkFrame", function()
 	end
 
 end)
-
-
-local break_into_lines = function(view, message, max_width, flags, name_width)
-	local text_lines = {}
-	local words = split(message, " ")
-	for i, word in pairs(words) do
-		local this_line = text_lines[#text_lines]
-		if #(text_lines) == 0 then
-			text_lines = {word}
-		elseif view.stringWidth(this_line .. " " .. word, flags, thin)/2 + (i==1 and name_width or 0) > chat_config.chat_width then
-			table.insert(text_lines, word)
-		else
-			text_lines[#text_lines] = $1 .. " " .. word
-		end
-	end
-	return text_lines
-end
 
 
 hud.add( function(v, player, camera)
