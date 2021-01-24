@@ -58,13 +58,12 @@ The `log` controls debug logging for the mod. The default value of `0` will resu
 
 # Commands
 
-
 ### CONFIG|{setting}|{value}
 
 Set a value for one of the settings `command_interval`, `parser_interval`, `spawn_distance` or `spawn_radius` as described above. This will cause the current config to be written to `chat_config.cfg` so that it will persist next time you play.
 
 
-## Object spawning
+## Object spawning and user messages
 
 Spawned objects are intended to display a chat message from whoever spawned them hovering over them. All object spawning commands take a `username`, `message` and `namecolour`.
 
@@ -74,6 +73,10 @@ Spawned objects are intended to display a chat message from whoever spawned them
 
 `namecolour` is the colour to highlight the user's name in. It can be one of pink, yellow, green, blue, red, grey, orange, sky, purple, aqua, peridot, azure, brown, rosy.
 
+
+### CHAT|{username}|{message}|{namecolour}
+
+Displays a message on the the screen. Intended for showing chat in-game. If you want to use it remember that non-ASCII characters will not show.
 
 
 ### OBJECT|{username}|{message}|{namecolour}|{objectId}
