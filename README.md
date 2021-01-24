@@ -28,23 +28,12 @@ command_interval 1
 parser_interval 35
 spawn_distance 300
 spawn_radius 200
-chat_width 100
-chat_x_pox 1
-chat_lines 20
-chat_timeout 350
-chat_y_pos 58
-```
-
-spawn_radius 200
-spawn_distance 300
-parser_interval 35
-command_interval 1
 chat_x_pos 1
+chat_y_pos 54
+chat_width 120
 chat_lines 29
 chat_timeout 350
-chat_width 120
-chat_y_pos 54
-
+```
 
 The `command_interval` is how often, in game ticks, a command is pulled from the current command queue to be executed. Increase this to give breathing room between commands executing. 35 ticks is equal to one second.
 
@@ -54,12 +43,13 @@ The `spawn_distance` is how far in front of the player spawned objects like badn
 
 The `spawn_radius` is the radius within which spawned objects will appear. Decrease this to make things spawn clustered closer together. Increase it to spread them out. Technically not a radius as it just offsets the X, Y value of the spawn, so objects spawn within a square aligned to the cardinal directions.
 
-`chat_width`
-`chat_x_pox`
-`chat_lines`
-`chat_timeout`
-`chat_y_pos`
+The `chat_x_pos` and `chat_y_pos` are the co-ordinates for where the chat for the `CHAT` command will be achored on screen.
 
+The `chat_width` is the max width in pixels (not characters) for the chat display.
+
+The `chat_lines` is the max number of lines to display for the chat. If the last message is longer than one line it will overflow this a little.
+
+The `chat_timeout` is how long a given message will be diplayed on screen.
 
 
 
