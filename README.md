@@ -28,6 +28,11 @@ command_interval 1
 parser_interval 35
 spawn_distance 300
 spawn_radius 200
+chat_width 60
+chat_x_pox 5
+chat_lines 60
+chat_timeout 175
+chat_y_pos 60
 ```
 
 The `command_interval` is how often, in game ticks, a command is pulled from the current command queue to be executed. Increase this to give breathing room between commands executing. 35 ticks is equal to one second.
@@ -37,6 +42,13 @@ The `parser_interval` is how often the command file is read and commands are add
 The `spawn_distance` is how far in front of the player spawned objects like badniks and monitors will appear in in-game units. For reference Sonic is 48 units tall.
 
 The `spawn_radius` is the radius within which spawned objects will appear. Decrease this to make things spawn clustered closer together. Increase it to spread them out. Technically not a radius as it just offsets the X, Y value of the spawn, so objects spawn within a square aligned to the cardinal directions.
+
+`chat_width`
+`chat_x_pox`
+`chat_lines`
+`chat_timeout`
+`chat_y_pos`
+
 
 
 

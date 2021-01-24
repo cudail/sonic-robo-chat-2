@@ -46,7 +46,7 @@ local badnik_list = {
 	eggrock = {MT_JETTBOMBER, MT_JETTGUNNER, MT_POPUPTURRET, MT_SPINCUSHION, MT_SNAILER}
 }
 
-local chat_lines = {}
+local chat_messages = {}
 
 local level_list = {
 	"greenflower", "greenflower", "greenflower",
@@ -424,34 +424,32 @@ local process_command = function (command_string)
 
 	--OBJECT|{username}|{message}|{namecolour}|{objectid}
 	if commandname == "OBJECT" then
-		local username, message, namecolour, objectId = command[2], command[3], command[4], tonumber(command[5])
+		local username = command[2] or ""
+		local message = command[3] or ""
+		local namecolour = command[4] or "yellow"
+		local objectId = tonumber(command[5])
 		if not objectId then
 			print("No object ID for OBJECT command")
 			return false
 		end
-		if not username then username = "" end
-		if not message then message = "" end
-		if not namecolour then namecolour = "yellow" end
 		print("Attempting to spawn object with ID ".. objectId .." with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'")
 		spawn_object_with_message(player, username, message, namecolour, objectId, FRACUNIT)
 
 	--BADNIK|{username}|{message}|{namecolour}|[scale]
 	elseif commandname == "BADNIK" then
-		local username, message, namecolour, scale = command[2], command[3], command[4], parseDecimal(command[5])
-		if not username then username = "" end
-		if not message then message = "" end
-		if not namecolour then namecolour = "yellow" end
-		if not scale then scale = FRACUNIT end
+		local username = command[2] or ""
+		local message = command[3] or ""
+		local namecolour = command[4] or "yellow"
+		local scale = parseDecimal(command[5]) or FRACUNIT
 		print("Attempting to spawn badnik with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'; and scale "..scale)
 		spawn_object_with_message(player, username, message, namecolour, pick_badnik(), scale)
 
 	--MONITOR|{username}|{message}|{namecolour}|[set]
 	elseif commandname == "MONITOR" then
-		local username , message, namecolour, monitor_set = command[2], command[3], command[4], command[5]
-		if not username then username = "" end
-		if not message then message = "" end
-		if not namecolour then namecolour = "yellow" end
-		if not monitor_set then	monitor_set = "allweighted" end
+		local username = command[2] or ""
+		local message = command[3] or ""
+		local namecolour = command[4] or "yellow"
+		local monitor_set = command[5] or "allweighted"
 		local monitor = rand_entry(monitor_sets[monitor_set])
 		if type(monitor) == "table" then
 			monitor = rand_entry(monitor)
@@ -462,10 +460,9 @@ local process_command = function (command_string)
 
 	--SPRING|{colour}|{orientation}|{direction}
 	elseif commandname == "SPRING" then
-		local colour, orientation, direction = command[2], command[3], command[4]
-		if not colour then colour = "yellow" end
-		if not orientation then orientation = "vertical" end
-		if not direction then direction = "forward" end
+		local colour = command[2] or "yellow"
+		local orientation = command[3] or "vertical"
+		local direction = command[4] or "forward"
 		local spring_type = springs[colour][orientation]
 		local spring = P_SpawnMobjFromMobj(player.mo, 0, 0, 0, spring_type)
 		spring.angle = player.mo.angle + ({forward = 0, left = ANGLE_90, back = ANGLE_180, right = ANGLE_270})[direction]
@@ -474,10 +471,9 @@ local process_command = function (command_string)
 
 	--CHAT|{username}|{message}|{namecolour}
 	elseif commandname == "CHAT" then
-		local username, message, namecolour = command[2], command[3], command[4]
-		username = username or ""
-		message = message or ""
-		namecolour = text_colours[namecolour] or V_YELLOWMAP
+		local username = command[2] or ""
+		local message = command[3] or ""
+		local namecolour = text_colours[namecolour] or V_YELLOWMAP
 		table.insert(chat_messages, {username=username, message=message, colour=namecolour, timer=chat_config.chat_timeout})
 
 	--SCALE|{scale}|{duration}
