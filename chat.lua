@@ -45,6 +45,8 @@ local badnik_list = {
 	eggrock = {MT_JETTBOMBER, MT_JETTGUNNER, MT_POPUPTURRET, MT_SPINCUSHION, MT_SNAILER}
 }
 
+local default_badniks = {MT_PENGUINATOR, MT_BLUECRAWLA, MT_GOLDBUZZ, MT_ROBOHOOD, MT_UNIDUS}
+
 local chat_messages = {}
 
 local level_list = {
@@ -356,7 +358,7 @@ local pick_badnik = function()
 			return rand_entry(level)
 		end
 	end
-	return MT_PENGUINATOR
+	return rand_entry(default_badniks)
 end
 
 
