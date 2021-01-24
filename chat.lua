@@ -321,6 +321,7 @@ local spawn_object_with_message = function(player, username, message, namecolour
 
 	local spawned = P_SpawnMobjFromMobj(player.mo, x+xr, y+yr, 50*FRACUNIT, object_id)
 	spawned.scale = scale
+	spawned.angle = FixedAngle(P_RandomRange(0,359)*FRACUNIT)
 
 	local linelength = 40
 
