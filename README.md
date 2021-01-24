@@ -28,12 +28,23 @@ command_interval 1
 parser_interval 35
 spawn_distance 300
 spawn_radius 200
-chat_width 60
-chat_x_pox 5
-chat_lines 60
-chat_timeout 175
-chat_y_pos 60
+chat_width 100
+chat_x_pox 1
+chat_lines 20
+chat_timeout 350
+chat_y_pos 58
 ```
+
+spawn_radius 200
+spawn_distance 300
+parser_interval 35
+command_interval 1
+chat_x_pos 1
+chat_lines 29
+chat_timeout 350
+chat_width 120
+chat_y_pos 54
+
 
 The `command_interval` is how often, in game ticks, a command is pulled from the current command queue to be executed. Increase this to give breathing room between commands executing. 35 ticks is equal to one second.
 
