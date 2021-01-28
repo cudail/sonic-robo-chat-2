@@ -511,7 +511,7 @@ local process_command = function (command_string)
 	elseif commandname == "SCALE" then
 		local scale, dur = command[2], command[3]
 		if not scale then return false end
-		if not duration then return false end
+		if not dur then return false end
 		log("Attemtping to scale player by "..scale.." for "..dur.." ticks")
 		player.chat.scaletimer = $1 + dur
 		player.mo.destscale = parseDecimal(scale)
