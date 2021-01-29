@@ -324,18 +324,27 @@ end
 
 
 local spawn_object_with_message = function(player, username, message, namecolour, object_id, scale)
-	local dist = chat_config.spawn_distance*FRACUNIT
-	local rrange = chat_config.spawn_radius*FRACUNIT
-	local x = FixedMul(cos(player.mo.angle), dist)
-	local y = FixedMul(sin(player.mo.angle), dist)
+	local dist = chat_config.spawn_distance
+	local rrange = P_RandomRange(0, chat_config.spawn_radius)
 
-	local rrange = 200*FRACUNIT
-	local xr = FixedMul(P_RandomFixed(), rrange)-rrange/2
-	local yr = FixedMul(P_RandomFixed(), rrange)-rrange/2
-
-	local spawned = P_SpawnMobjFromMobj(player.mo, x+xr, y+yr, 50*FRACUNIT, object_id)
+	local spawned = P_SpawnMobjFromMobj(player.mo, 0, 0, 50*FRACUNIT, object_id)
 	spawned.scale = scale
 	spawned.angle = FixedAngle(P_RandomRange(0,359)*FRACUNIT)
+
+	local x, y, d, a = player.mo.x, player.mo.y, 0, player.mo.angle
+	while d < dist and P_TryMove(spawned, x, y) do
+		d = $1 + 1
+		x = player.mo.x + FixedMul(d*FRACUNIT, cos(a))
+		y = player.mo.y + FixedMul(d*FRACUNIT, sin(a))
+	end
+
+	local xs, xy = spawned.x, spawned.y
+	x, y, d, a = xs, xy, 0, FixedAngle(P_RandomRange(0,359)*FRACUNIT)
+	while d < rrange and P_TryMove(spawned, x, y) do
+		d = $1 + 1
+		x = xs + FixedMul(d*FRACUNIT, cos(a))
+		y = xy + FixedMul(d*FRACUNIT, sin(a))
+	end
 
 	local linelength = 40
 
@@ -461,7 +470,7 @@ local process_command = function (command_string)
 		local objectId = tonumber(command[5])
 		if not objectId then
 			log("No object ID for OBJECT command")
-			return false
+			return
 		end
 		log("Attempting to spawn object with ID ".. objectId .." with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'")
 		spawn_object_with_message(player, username, message, namecolour, objectId, FRACUNIT)
@@ -510,8 +519,8 @@ local process_command = function (command_string)
 	--SCALE|{scale}|{duration}
 	elseif commandname == "SCALE" then
 		local scale, dur = command[2], command[3]
-		if not scale then return false end
-		if not dur then return false end
+		if not scale then return end
+		if not dur then return end
 		log("Attemtping to scale player by "..scale.." for "..dur.." ticks")
 		player.chat.scaletimer = $1 + dur
 		player.mo.destscale = parseDecimal(scale)
@@ -541,7 +550,7 @@ local process_command = function (command_string)
 	elseif commandname == "SUPER" then
 		if skins[player.mo.skin].flags & SF_SUPER == 0 then
 			log(player.mo.skin .. " cannot go super.")
-			return false
+			return
 		end
 
 		if not All7Emeralds(emeralds) then
@@ -552,7 +561,7 @@ local process_command = function (command_string)
 				end
 			else
 				log("player does not have emeralds, cannot go super")
-				return false
+				return
 			end
 		end
 		log("Forcing super")
@@ -564,7 +573,7 @@ local process_command = function (command_string)
 		if duration then
 			control_reverse_timer = duration
 		else
-			return false
+			return
 		end
 
 	--FORCE_JUMP|{duration}
@@ -573,7 +582,7 @@ local process_command = function (command_string)
 		if duration then
 			force_jump_timer = duration
 		else
-			return false
+			return
 		end
 
 	--TURN
@@ -586,7 +595,7 @@ local process_command = function (command_string)
 	elseif commandname == "SPEED_STATS" then
 		local scale, duration = parseDecimal(command[2]), tonumber(command[3])
 		if scale == nil or duration == nil or scale < 1 or duration < 1 then
-			return false
+			return
 		end
 		speed_scale_timer = duration
 		local skin = skins[player.mo.skin]
@@ -601,7 +610,7 @@ local process_command = function (command_string)
 	elseif commandname == "JUMP_STATS" then
 		local scale, duration = parseDecimal(command[2]), tonumber(command[3])
 		if scale == nil or duration == nil or scale < 1 or duration < 1 then
-			return false
+			return
 		end
 		jump_scale_timer = duration
 		local skin = skins[player.mo.skin]
@@ -622,9 +631,9 @@ local process_command = function (command_string)
 	--CONFIG
 	elseif commandname == "CONFIG" then
 		local setting, value = command[2], tonumber(command[3])
-		if not setting then return false end
-		if not value then return false end
-		if not chat_config[setting] then return false end
+		if not setting then return end
+		if not value then return end
+		if not chat_config[setting] then return end
 		log("Updating config setting '"..setting.."' to "..value)
 		chat_config[setting] = value
 		write_config()
