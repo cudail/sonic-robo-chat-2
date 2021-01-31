@@ -450,24 +450,35 @@ local change_character = function(player, colour, skin)
 end
 
 
+local parse_command_parameters = function(command_string)
+	local parts = split(command_string, "|")
+	local command = {name = trim(parts[1])}
+	for i = 2, #parts  do
+		local p = parts[i]
+		local splitpos = string.find(p, "^",1,true)
+		local paramname = trim(p:sub(1,splitpos-1))
+		local paramvalu = trim(p:sub(splitpos+1, #p))
+		command[paramname] = paramvalu
+	end
+	return command
+end
+
 local process_command = function (command_string)
 	log("Trying to process command: " .. command_string )
-	local command = split(command_string, "|")
-	if not command or #command == 0 then
+	local command = parse_command_parameters(command_string)
+	if not command or not command.name then
 		return
 	end
-	for i=1, #command do
-		command[i] = trim($1)
-	end
 	local player = players[0]
-	local commandname = command[1]
+	local follower = players[1]
 
 	--OBJECT|{username}|{message}|{namecolour}|{objectid}
-	if commandname == "OBJECT" then
-		local username = command[2] or ""
-		local message = command[3] or ""
-		local namecolour = command[4] or "yellow"
-		local objectId = tonumber(command[5])
+	if command.name == "OBJECT" then
+		local username = command.username or ""
+		local message = command.message or ""
+		local namecolour = command.colour or "yellow"
+		local scale = parseDecimal(command.scale) or FRACUNIT
+		local objectId = tonumber(command.objectid)
 		if not objectId then
 			log("No object ID for OBJECT command")
 			return
@@ -476,20 +487,21 @@ local process_command = function (command_string)
 		spawn_object_with_message(player, username, message, namecolour, objectId, FRACUNIT)
 
 	--BADNIK|{username}|{message}|{namecolour}|[scale]
-	elseif commandname == "BADNIK" then
-		local username = command[2] or ""
-		local message = command[3] or ""
-		local namecolour = command[4] or "yellow"
-		local scale = parseDecimal(command[5]) or FRACUNIT
+	elseif command.name == "BADNIK" then
+		local username = command.username or ""
+		local message = command.message or ""
+		local namecolour = command.colour or "yellow"
+		local scale = parseDecimal(command.scale) or FRACUNIT
 		log("Attempting to spawn badnik with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'; and scale "..scale)
 		spawn_object_with_message(player, username, message, namecolour, pick_badnik(), scale)
 
 	--MONITOR|{username}|{message}|{namecolour}|[set]
-	elseif commandname == "MONITOR" then
-		local username = command[2] or ""
-		local message = command[3] or ""
-		local namecolour = command[4] or "yellow"
-		local monitor_set = command[5] or "allweighted"
+	elseif command.name == "MONITOR" then
+		local username = command.username or ""
+		local message = command.message or ""
+		local namecolour = command.colour or "yellow"
+		local scale = parseDecimal(command.scale) or FRACUNIT
+		local monitor_set = command.set or "allweighted"
 		local monitor = rand_entry(monitor_sets[monitor_set])
 		if type(monitor) == "table" then
 			monitor = rand_entry(monitor)
@@ -499,10 +511,10 @@ local process_command = function (command_string)
 		spawn_object_with_message(player, username, message, namecolour, monitor, FRACUNIT)
 
 	--SPRING|{colour}|{orientation}|{direction}
-	elseif commandname == "SPRING" then
-		local colour = command[2] or "yellow"
-		local orientation = command[3] or "vertical"
-		local direction = command[4] or "forward"
+	elseif command.name == "SPRING" then
+		local colour = command.colour or "yellow"
+		local orientation = command.orientation or "vertical"
+		local direction = command.direction or "forward"
 		local spring_type = springs[colour][orientation]
 		local spring = P_SpawnMobjFromMobj(player.mo, 0, 0, 0, spring_type)
 		spring.angle = player.mo.angle + ({forward = 0, left = ANGLE_90, back = ANGLE_180, right = ANGLE_270})[direction]
@@ -510,15 +522,15 @@ local process_command = function (command_string)
 		table.insert(spawned_spring_list, spring)
 
 	--CHAT|{username}|{message}|{namecolour}
-	elseif commandname == "CHAT" then
-		local username = command[2] or ""
-		local message = command[3] or ""
-		local namecolour = text_colours[command[4]] or V_YELLOWMAP
+	elseif command.name == "CHAT" then
+		local username = command.username or ""
+		local message = command.message or ""
+		local namecolour = text_colours[command.colour] or V_YELLOWMAP
 		table.insert(chat_messages, {username=username, message=message, colour=namecolour, timer=chat_config.chat_timeout})
 
 	--SCALE|{scale}|{duration}
-	elseif commandname == "SCALE" then
-		local scale, dur = command[2], command[3]
+	elseif command.name == "SCALE" then
+		local scale, dur = command.scale, command.duration
 		if not scale then return end
 		if not dur then return end
 		log("Attemtping to scale player by "..scale.." for "..dur.." ticks")
@@ -526,35 +538,22 @@ local process_command = function (command_string)
 		player.mo.destscale = parseDecimal(scale)
 
 	--CHARACTER|[colour]|[character]|[playerId]
-	elseif commandname == "CHARACTER" then
-		local colour, skin, playernum
-		if #command > 1 then
-			if command[2] == "random" then
-				colour = rand_dict_entry(skin_colours)
-			elseif skin_colours[command[2]] then
-				colour = skin_colours[command[2]]
-			elseif not isnumber(command[2]) and skins[command[2]] then
-				skin = skins[command[2]]
-			end
-			if #command > 2 and not isnumber(command[3]) and skins[command[3]] then
-				skin = skins[command[3]].name
-			end
-			playernum = tonumber(command[#command])
-		end
-		if playernum ~= nil and players[playernum] then
-			player = players[playernum]
-		end
-		change_character(player, colour, skin)
+	elseif command.name == "CHARACTER" then
+		--local colour, skin, playernum
+		local colour = command.colour
+		local skin = command.character
+		local playerId = command.playerid or 0
+		change_character(players[playerId], colour, skin)
 
 	--SUPER|[give_emeralds]
-	elseif commandname == "SUPER" then
+	elseif command.name == "SUPER" then
 		if skins[player.mo.skin].flags & SF_SUPER == 0 then
 			log(player.mo.skin .. " cannot go super.")
 			return
 		end
 
 		if not All7Emeralds(emeralds) then
-			if command[2] == "true" then
+			if command.giveemeralds == "true" then
 				log("granting emeralds")
 				for i = 1, #chaosEmeralds do
 					P_SpawnMobj(player.mo.x, player.mo.y, player.mo.z, chaosEmeralds[i])
@@ -568,8 +567,8 @@ local process_command = function (command_string)
 		P_DoSuperTransformation(player)
 
 	--REVERSE|{duration}
-	elseif commandname == "REVERSE" then
-		local duration = tonumber(command[2])
+	elseif command.name == "REVERSE" then
+		local duration = tonumber(command.duration)
 		if duration then
 			control_reverse_timer = duration
 		else
@@ -577,8 +576,8 @@ local process_command = function (command_string)
 		end
 
 	--FORCE_JUMP|{duration}
-	elseif commandname == "FORCE_JUMP" then
-		local duration = tonumber(command[2])
+	elseif command.name == "FORCE_JUMP" then
+		local duration = tonumber(command.duration)
 		if duration then
 			force_jump_timer = duration
 		else
@@ -586,14 +585,14 @@ local process_command = function (command_string)
 		end
 
 	--TURN
-	elseif commandname == "TURN" then
+	elseif command.name == "TURN" then
 		player.mo.angle = $1 + ANGLE_180
 		player.mo.momx = - $1
 		player.mo.momy = - $1
 
 	--SPEED_STATS|{scale}|{duration}
-	elseif commandname == "SPEED_STATS" then
-		local scale, duration = parseDecimal(command[2]), tonumber(command[3])
+	elseif command.name == "SPEED_STATS" then
+		local scale, duration = parseDecimal(command.scale), tonumber(command.duration)
 		if scale == nil or duration == nil or scale < 1 or duration < 1 then
 			return
 		end
@@ -607,8 +606,8 @@ local process_command = function (command_string)
 		player.thrustfactor = FixedMul(skin.thrustfactor, scale)
 
 	--JUMP_STATS|{scale}|{duration}
-	elseif commandname == "JUMP_STATS" then
-		local scale, duration = parseDecimal(command[2]), tonumber(command[3])
+	elseif command.name == "JUMP_STATS" then
+		local scale, duration = parseDecimal(command.scale), tonumber(command.duration)
 		if scale == nil or duration == nil or scale < 1 or duration < 1 then
 			return
 		end
@@ -617,20 +616,20 @@ local process_command = function (command_string)
 		player.jumpfactor = FixedMul(skin.jumpfactor, scale)
 
 	--RING
-	elseif commandname == "RING" then
+	elseif command.name == "RING" then
 		S_StartSound(mo, sfx_itemup)
 		player.rings = $1 + 1
 
 	--UNRING
-	elseif commandname == "UNRING" then
+	elseif command.name == "UNRING" then
 		S_StartSound(mo, sfx_spkdth)
 		if player.rings > 0 then
 			player.rings = $1 - 1
 		end
 
 	--CONFIG
-	elseif commandname == "CONFIG" then
-		local setting, value = command[2], tonumber(command[3])
+	elseif command.name == "CONFIG" then
+		local setting, value = command.setting, tonumber(command.value)
 		if not setting then return end
 		if not value then return end
 		if not chat_config[setting] then return end
@@ -639,7 +638,7 @@ local process_command = function (command_string)
 		write_config()
 
 	else
-		log("Unknown command "..command[1])
+		log("Unknown command "..command.name)
 	end
 end
 
