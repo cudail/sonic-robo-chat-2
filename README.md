@@ -90,6 +90,8 @@ Displays a message on the the screen. Intended for showing chat in-game. Remembe
 
 Spawn a object of with with object type number `objectId` in front of the player. A list of objects and their IDs can be found here: https://wiki.srb2.org/wiki/List_of_Object_types
 
+Example: `OBJECT|objectid^61|username^robotnik|message^get a load of this|namecolour^orange|scale^2.5` will spawn the Egg Mobile (boss of Green Flower Zone) two and a half times larger than normal
+
 
 ### BADNIK|[username]|[message]|[namecolour]|[scale]
 
