@@ -542,7 +542,7 @@ local process_command = function (command_string)
 	elseif command.name == "CHARACTER" then
 		local colour = command.colour
 		local skin = command.character
-		local playerId = command.playerid or 0
+		local playerId = tonumber(command.playerid) or 0
 		change_character(players[playerId], colour, skin)
 
 	--SWAP
