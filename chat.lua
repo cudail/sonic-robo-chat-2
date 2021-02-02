@@ -431,7 +431,7 @@ end
 
 
 local change_character = function(player, colour, skin)
-	if not skin then
+	if not skin or not skins[skin] then
 		local skintable = rand_entry(skins)
 		while not skintable or skintable.name == player.mo.skin do
 			skintable = rand_entry(skins)
@@ -439,14 +439,15 @@ local change_character = function(player, colour, skin)
 		skin = skintable.name
 	end
 
+	local colnum = skins[skin].prefcolor
 	if colour == "random" then
-		colour = rand_entry(skin_colours)
-	elseif not colour then
-		colour = skins[skin].prefcolor
+		colnum = rand_dict_entry(skin_colours)
+	elseif skin_colours[colour] ~= nil then
+		colnum = skin_colours[colour]
 	end
 
 	R_SetPlayerSkin(player, skin)
-	player.mo.color = colour
+	player.mo.color = colnum
 end
 
 
