@@ -86,7 +86,7 @@ Most object spawning commands can also take a `scale` value. This is a decimal t
 Displays a message on the the screen. Intended for showing chat in-game. Remember that non-ASCII characters will not work.
 
 
-### OBJECT|{objectId}|[username]|[message]|[namecolour]|[scale]
+### OBJECT|{objectid}|[username]|[message]|[namecolour]|[scale]
 
 Spawn a object of with with object type number `objectId` in front of the player. A list of objects and their IDs can be found here: https://wiki.srb2.org/wiki/List_of_Object_types
 
