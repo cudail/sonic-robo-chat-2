@@ -540,11 +540,21 @@ local process_command = function (command_string)
 
 	--CHARACTER|[colour]|[character]|[playerId]
 	elseif command.name == "CHARACTER" then
-		--local colour, skin, playernum
 		local colour = command.colour
 		local skin = command.character
 		local playerId = command.playerid or 0
 		change_character(players[playerId], colour, skin)
+
+	--SWAP
+	elseif command.name == "SWAP" then
+		if player and follower then
+			local ps = player.mo.skin
+			R_SetPlayerSkin(player, follower.mo.skin)
+			R_SetPlayerSkin(follower, ps)
+			player.mo.color, follower.mo.color = follower.mo.color, player.mo.color
+		else
+			return
+		end
 
 	--SUPER|[give_emeralds]
 	elseif command.name == "SUPER" then
