@@ -477,7 +477,7 @@ local process_command = function (command_string)
 	if command.name == "OBJECT" then
 		local username = command.username or ""
 		local message = command.message or ""
-		local namecolour = command.colour or "yellow"
+		local namecolour = command.namecolour or "yellow"
 		local scale = parseDecimal(command.scale) or FRACUNIT
 		local objectId = tonumber(command.objectid)
 		if not objectId then
@@ -485,13 +485,13 @@ local process_command = function (command_string)
 			return
 		end
 		log("Attempting to spawn object with ID ".. objectId .." with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'")
-		spawn_object_with_message(player, username, message, namecolour, objectId, FRACUNIT)
+		spawn_object_with_message(player, username, message, namecolour, objectId, scale)
 
 	--BADNIK|{username}|{message}|{namecolour}|[scale]
 	elseif command.name == "BADNIK" then
 		local username = command.username or ""
 		local message = command.message or ""
-		local namecolour = command.colour or "yellow"
+		local namecolour = command.namecolour or "yellow"
 		local scale = parseDecimal(command.scale) or FRACUNIT
 		log("Attempting to spawn badnik with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'; and scale "..scale)
 		spawn_object_with_message(player, username, message, namecolour, pick_badnik(), scale)
@@ -500,7 +500,7 @@ local process_command = function (command_string)
 	elseif command.name == "MONITOR" then
 		local username = command.username or ""
 		local message = command.message or ""
-		local namecolour = command.colour or "yellow"
+		local namecolour = command.namecolour or "yellow"
 		local scale = parseDecimal(command.scale) or FRACUNIT
 		local monitor_set = command.set or "allweighted"
 		local monitor = rand_entry(monitor_sets[monitor_set])
@@ -509,7 +509,7 @@ local process_command = function (command_string)
 		end
 		if not monitor then monitor = MT_RING_BOX end
 		log("Attempting to spawn monitor with object ID ".. monitor .." from set "..monitor_set.." with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'")
-		spawn_object_with_message(player, username, message, namecolour, monitor, FRACUNIT)
+		spawn_object_with_message(player, username, message, namecolour, monitor, scale)
 
 	--SPRING|{colour}|{orientation}|{direction}
 	elseif command.name == "SPRING" then
@@ -526,7 +526,7 @@ local process_command = function (command_string)
 	elseif command.name == "CHAT" then
 		local username = command.username or ""
 		local message = command.message or ""
-		local namecolour = text_colours[command.colour] or V_YELLOWMAP
+		local namecolour = text_colours[command.namecolour] or V_YELLOWMAP
 		table.insert(chat_messages, {username=username, message=message, colour=namecolour, timer=chat_config.chat_timeout})
 
 	--SCALE|{scale}|{duration}
