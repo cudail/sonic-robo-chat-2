@@ -182,6 +182,11 @@ examples:
 `CHARACTER|colour^red|character^sonic|playerid^1` will change the follower to a red Sonic
 
 
+### SWAP
+
+If the player has a follower it swaps the player and follower characters.
+
+
 ### SUPER|[giveemeralds]
 
 Force the player into super mode. All of the usual restrictions for turning super are in place: The player must be playing a character who can turn super (e.g. Sonic can and Tails cannot) and the player must already have all Chaos Emeralds.
