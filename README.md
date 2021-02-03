@@ -206,5 +206,10 @@ Give the player a ring.
 
 ### UNRING
 
-Remove a ring from the player
+Remove a ring from the player.
+
+
+### 1UP
+
+Give the player and extra life.
 

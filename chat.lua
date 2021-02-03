@@ -632,15 +632,20 @@ local process_command = function (command_string)
 
 	--RING
 	elseif command.name == "RING" then
-		S_StartSound(mo, sfx_itemup)
+		S_StartSound(player.mo, sfx_itemup)
 		player.rings = $1 + 1
 
 	--UNRING
 	elseif command.name == "UNRING" then
-		S_StartSound(mo, sfx_spkdth)
+		S_StartSound(player.mo, sfx_spkdth)
 		if player.rings > 0 then
 			player.rings = $1 - 1
 		end
+
+	--1UP
+	elseif command.name == "1UP" then
+		S_StartSound(player.mo, sfx_oneup)
+		player.lives = $1 + 1
 
 	--CONFIG
 	elseif command.name == "CONFIG" then
