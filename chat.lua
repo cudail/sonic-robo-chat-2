@@ -32,6 +32,7 @@ local jump_scale_timer = 0
 local track_playing = true
 local track_playing_timer = 0
 local normal_music_position = 0
+local changing_map = false
 
 ---------------
 -- constants --
@@ -40,8 +41,6 @@ local normal_music_position = 0
 local command_file_name = "chat_commands.txt"
 local config_file_name = "chat_config.cfg"
 local log_file_name = "chat_log.txt"
-
-local SPAWN_MESSAGE_TIMEOUT = TICRATE*60 --length of time to display messages over spawned objects
 
 local badnik_list = {
 	greenflower =  { MT_BLUECRAWLA, MT_REDCRAWLA, MT_GFZFISH},
@@ -333,20 +332,21 @@ local spawn_object_with_message = function(player, username, message, namecolour
 	local dist = chat_config.spawn_distance
 	local rrange = P_RandomRange(0, chat_config.spawn_radius)
 
-	local spawned = P_SpawnMobjFromMobj(player.mo, 0, 0, 50*FRACUNIT, object_id)
-	spawned.scale = scale
-	spawned.angle = FixedAngle(P_RandomRange(0,359)*FRACUNIT)
+	local spawned = { scale = scale, id = object_id }
+	spawned.object = P_SpawnMobjFromMobj(player.mo, 0, 0, 50*FRACUNIT, object_id)
+	spawned.object.scale = scale
+	spawned.object.angle = FixedAngle(P_RandomRange(0,359)*FRACUNIT)
 
 	local x, y, d, a = player.mo.x, player.mo.y, 0, player.mo.angle
-	while d < dist and P_TryMove(spawned, x, y) do
+	while d < dist and P_TryMove(spawned.object, x, y) do
 		d = $1 + 1
 		x = player.mo.x + FixedMul(d*FRACUNIT, cos(a))
 		y = player.mo.y + FixedMul(d*FRACUNIT, sin(a))
 	end
 
-	local xs, xy = spawned.x, spawned.y
+	local xs, xy = spawned.object.x, spawned.object.y
 	x, y, d, a = xs, xy, 0, FixedAngle(P_RandomRange(0,359)*FRACUNIT)
-	while d < rrange and P_TryMove(spawned, x, y) do
+	while d < rrange and P_TryMove(spawned.object, x, y) do
 		d = $1 + 1
 		x = xs + FixedMul(d*FRACUNIT, cos(a))
 		y = xy + FixedMul(d*FRACUNIT, sin(a))
@@ -354,10 +354,13 @@ local spawn_object_with_message = function(player, username, message, namecolour
 
 	local linelength = 40
 
+	spawned.x = spawned.object.x
+	spawned.y = spawned.object.y
+	spawned.z = spawned.object.z
+	spawned.health = spawned.object.health
 	spawned.chat = {}
 	spawned.chat.name = username
 	spawned.chat.namecolour = text_colours[namecolour] or V_YELLOWMAP
-	spawned.chat.timer = 0
 	spawned.chat.text = {}
 	local words = split(message, " ")
 	for i = 1, #words do
@@ -747,15 +750,20 @@ addHook("PreThinkFrame", function()
 	end
 
 	local i = 1
-	while i <= #spawned_list do
-		local b = spawned_list[i]
-		if not b.valid or b.chat.timer > SPAWN_MESSAGE_TIMEOUT then
-			table.remove(spawned_list, i)
-		elseif b.type > 155 and b.type < 211 and b.state == S_BOX_POP2 then --is a destroyed item box
-			table.remove(spawned_list, i)
-		else
-			b.chat.timer = $1+1
-			i = $1+1
+
+	if not changing_map then
+		while i <= #spawned_list do
+			local s = spawned_list[i]
+			local b = s.object
+			if not b.valid then
+				table.remove(spawned_list, i)
+			elseif b.type > 155 and b.type < 211 and b.state == S_BOX_POP2 then --is a destroyed item box
+				table.remove(spawned_list, i)
+			else
+				s.x, s.y, s.z = b.x, b.y, b.z
+				s.health = b.health
+				i = $1+1
+			end
 		end
 	end
 
@@ -784,7 +792,7 @@ addHook("PreThinkFrame", function()
 	end
 
 	table.sort(spawned_list, function(a, b)
-		return R_PointToDist(a.x, a.y) > R_PointToDist(b.x, b.y)
+		return R_PointToDist(a.object.x, a.object.y) > R_PointToDist(b.object.x, b.object.y)
 	end)
 
 
@@ -898,7 +906,8 @@ hud.add( function(v, player, camera)
 
 	local distance = FixedDiv(hudwidth / 2, tan(fov/2)) -- the "distance" the HUD plane is projected from the player
 
-	for i, b in pairs(spawned_list) do
+	for i, s in pairs(spawned_list) do
+		local b = s.object
 		if b.valid then
 
 			if not P_CheckSight(player.mo, b) then continue end
@@ -942,16 +951,30 @@ hud.add( function(v, player, camera)
 			end
 
 			local nameflags = V_SNAPTOLEFT|V_SNAPTOTOP
-			nameflags = $1 | b.chat.namecolour
+			nameflags = $1 | s.chat.namecolour
 
-			v.drawString(hpos, vpos-lineheight*FRACUNIT*#b.chat.text, b.chat.name, nameflags, namefont)
+			v.drawString(hpos, vpos-lineheight*FRACUNIT*#s.chat.text, s.chat.name, nameflags, namefont)
 
 			local textflags = V_SNAPTOLEFT|V_SNAPTOTOP
-			for i=1, #b.chat.text do
-				v.drawString(hpos, vpos-lineheight*FRACUNIT*(#b.chat.text-i), b.chat.text[i], textflags, textfont)
+			for i=1, #s.chat.text do
+				v.drawString(hpos, vpos-lineheight*FRACUNIT*(#s.chat.text-i), s.chat.text[i], textflags, textfont)
 			end
 		end
 	end
 end, "game")
 
 
+addHook("MapLoad", function(mapnum)
+	changing_map = false
+	for i, s in pairs(spawned_list) do
+		s.object = P_SpawnMobj(s.x, s.y, s.z, s.id)
+		s.object.scale = s.scale
+		s.object.angle = FixedAngle(P_RandomRange(0,359)*FRACUNIT)
+		s.object.health = s.health
+	end
+end)
+
+
+addHook("MapChange", function(mapnum)
+	changing_map = true
+end)
