@@ -126,6 +126,11 @@ Spawns a spring directly on top of a player. Springs despawn after one second an
 `direction` is the direction the spring will point relative to the player. `front` springs push the player in direction they were already facing, `back` in the opposite direction and `left` and `right` push a player orthogonal to their original facing. Defaults to `forward`.
 
 
+### AIR
+
+Spawn an air bubble on the player. This will instantly despawn if spawned not in the water. It will take a moment before it becomes breathable so if the player is moving they might just run straight past it.
+
+
 
 ## Player commands
 
