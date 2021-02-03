@@ -212,3 +212,10 @@ Give the player and extra life.
 ### AIR
 
 Give the player air. All player momentum is stopped, the player is forced into the gasping for air state and the drowning timer is reset. This works regardless of whether the player is underwater or not. It doesn't actually spawn an air bubble, it just manipulates the player state directly. Could be used to harm the player by e.g. using it to stop all player momentum while they're travelling over a bottomless pit.
+
+
+### SOUND|{sound}
+
+Play a sound given its ID number from. List: https://wiki.srb2.org/wiki/List_of_sounds
+
+Example: `SOUND|sound^21` will play the player skidding sound

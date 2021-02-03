@@ -669,6 +669,13 @@ local process_command = function (command_string)
 		P_PlayLivesJingle(player)
 		player.lives = $1 + 1
 
+	--SOUND
+	elseif command.name == "SOUND" then
+		local sound = tonumber(command.sound)
+		if sound ~= nil then
+			S_StartSound(player.mo, sound)
+		end
+
 	--CONFIG
 	elseif command.name == "CONFIG" then
 		local setting, value = command.setting, tonumber(command.value)
