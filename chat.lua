@@ -30,7 +30,7 @@ local speed_scale_timer = 0
 local jump_scale_timer = 0
 
 local track_playing = true
-local track_playing_timer = 35
+local track_playing_timer = 0
 local normal_music_position = 0
 
 ---------------
@@ -689,7 +689,7 @@ local process_command = function (command_string)
 			normal_music_position = S_GetMusicPosition()
 			S_ChangeMusic(music, false)
 			track_playing = true
-			track_playing_timer = 35
+			track_playing_timer = 1
 		end
 
 	--CONFIG
