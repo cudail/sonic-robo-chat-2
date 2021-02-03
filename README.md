@@ -223,7 +223,7 @@ Example: `SOUND|sound^21` will play the player skidding sound
 
 ### MUSIC|{track}
 
-Play the given music track. The normal stage music will start over after the track has finished playing. If an invalid name is passed in then it will cut off the normal stage music, which will restart after a second.
+Play the given music track. The normal stage music will resume from where it left off after the track has finished playing. If an invalid name is passed in then it will cut off the normal stage music but it should resume after a second.
 
 List of music: https://wiki.srb2.org/wiki/List_of_music
 

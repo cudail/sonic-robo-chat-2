@@ -31,6 +31,7 @@ local jump_scale_timer = 0
 
 local track_playing = true
 local track_playing_timer = 35
+local normal_music_position = 0
 
 ---------------
 -- constants --
@@ -685,6 +686,7 @@ local process_command = function (command_string)
 	elseif command.name == "MUSIC" then
 		local music = command.track
 		if music then
+			normal_music_position = S_GetMusicPosition()
 			S_ChangeMusic(music, false)
 			track_playing = true
 			track_playing_timer = 35
@@ -729,6 +731,7 @@ addHook("PreThinkFrame", function()
 	elseif track_playing and S_GetMusicPosition() == 0 then
 		track_playing = false
 		P_RestoreMusic(player)
+		S_SetMusicPosition(normal_music_position)
 	end
 
 	if player.chat == nil then
