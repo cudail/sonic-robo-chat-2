@@ -115,6 +115,11 @@ Spawn an item monitor in front of the player.
 * `shield` spawn a shield monitor
 
 
+### DESPAWN
+
+Destroys everything that was spawned via the chat commands. Can be used to clear things up if something that was spawned is causing problems.
+
+
 ### SPRING|[colour]|[orientation]|[direction]
 
 Spawns a spring directly on top of a player. Springs despawn after one second and don't display any message.

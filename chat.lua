@@ -705,6 +705,13 @@ local process_command = function (command_string)
 		chat_config[setting] = value
 		write_config()
 
+	--DESPAWN
+	elseif command.name == "DESPAWN" then
+		while #spawned_list > 0 do
+			P_KillMobj(spawned_list[1].object)
+			table.remove(spawned_list, 1)
+		end
+
 	else
 		log("Unknown command "..command.name)
 	end
