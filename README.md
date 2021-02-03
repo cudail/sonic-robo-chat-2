@@ -219,3 +219,12 @@ Give the player air. All player momentum is stopped, the player is forced into t
 Play a sound given its ID number from. List: https://wiki.srb2.org/wiki/List_of_sounds
 
 Example: `SOUND|sound^21` will play the player skidding sound
+
+
+### MUSIC|{track}
+
+Play the given music track. The normal stage music will start over after the track has finished playing. If an invalid name is passed in then it will cut off the normal stage music, which will restart after a second.
+
+List of music: https://wiki.srb2.org/wiki/List_of_music
+
+Example: `MUSIC|track^_DROWN` will play the drowning music. Very evil.

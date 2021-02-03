@@ -29,6 +29,9 @@ local force_jump_timer = 0
 local speed_scale_timer = 0
 local jump_scale_timer = 0
 
+local track_playing = true
+local track_playing_timer = 35
+
 ---------------
 -- constants --
 ---------------
@@ -678,6 +681,15 @@ local process_command = function (command_string)
 			S_StartSound(player.mo, sound)
 		end
 
+	--MUSIC
+	elseif command.name == "MUSIC" then
+		local music = command.track
+		if music then
+			S_ChangeMusic(music, false)
+			track_playing = true
+			track_playing_timer = 35
+		end
+
 	--CONFIG
 	elseif command.name == "CONFIG" then
 		local setting, value = command.setting, tonumber(command.value)
@@ -710,6 +722,13 @@ addHook("PreThinkFrame", function()
 
 	if player.playerstate ~= PST_LIVE or player.pflags & PF_FINISHED > 0 or player.exiting > 0 then
 		return
+	end
+
+	if track_playing_timer > 0 then
+		track_playing_timer = $1 - 1
+	elseif track_playing and S_GetMusicPosition() == 0 then
+		track_playing = false
+		P_RestoreMusic(player)
 	end
 
 	if player.chat == nil then
