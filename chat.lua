@@ -1,3 +1,5 @@
+freeslot("sfx_unring")
+
 
 ---------------
 -- variables --
@@ -659,9 +661,9 @@ local process_command = function (command_string)
 
 	--UNRING
 	elseif command.name == "UNRING" then
-		S_StartSound(player.mo, sfx_spkdth)
 		if player.rings > 0 then
 			player.rings = $1 - 1
+			S_StartSound(player.mo, sfx_unring)
 		end
 
 	--1UP
