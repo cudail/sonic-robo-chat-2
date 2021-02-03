@@ -522,6 +522,10 @@ local process_command = function (command_string)
 		spring.life_timer = TICRATE
 		table.insert(spawned_spring_list, spring)
 
+	--AIR
+	elseif command.name == "AIR" then
+		P_SpawnMobjFromMobj(player.mo, 0, 0, 0, MT_EXTRALARGEBUBBLE)
+
 	--CHAT|{username}|{message}|{namecolour}
 	elseif command.name == "CHAT" then
 		local username = command.username or ""
