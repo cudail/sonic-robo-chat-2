@@ -126,11 +126,6 @@ Spawns a spring directly on top of a player. Springs despawn after one second an
 `direction` is the direction the spring will point relative to the player. `front` springs push the player in direction they were already facing, `back` in the opposite direction and `left` and `right` push a player orthogonal to their original facing. Defaults to `forward`.
 
 
-### AIR
-
-Spawn an air bubble on the player. This will instantly despawn if spawned not in the water. It will take a moment before it becomes breathable so if the player is moving they might just run straight past it.
-
-
 
 ## Player commands
 
@@ -213,3 +208,7 @@ Remove a ring from the player.
 
 Give the player and extra life.
 
+
+### AIR
+
+Give the player air. All player momentum is stopped, the player is forced into the gasping for air state and the drowning timer is reset. This works regardless of whether the player is underwater or not. It doesn't actually spawn an air bubble, it just manipulates the player state directly. Could be used to harm the player by e.g. using it to stop all player momentum while they're travelling over a bottomless pit.
