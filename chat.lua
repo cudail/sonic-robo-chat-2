@@ -524,7 +524,29 @@ local process_command = function (command_string)
 
 	--AIR
 	elseif command.name == "AIR" then
-		P_SpawnMobjFromMobj(player.mo, 0, 0, 0, MT_EXTRALARGEBUBBLE)
+		--P_SpawnMobjFromMobj(player.mo, 0, 0, 0, MT_EXTRALARGEBUBBLE)
+		if player.powers[pw_underwater] > 0 then
+			player.powers[pw_underwater] = 1050
+		end
+		if player.powers[pw_spacetime] > 0 then
+			player.powers[pw_spacetime] = 403
+		end
+		player.mo.state = S_PLAY_GASP
+		P_InstaThrust(player.mo, 0, 0)
+		P_SetObjectMomZ(player.mo, 0)
+		S_StartSound(player.mo, sfx_gasp)
+		P_RestoreMusic(player)
+		if follower then
+			follower.mo.state = S_PLAY_GASP
+			P_InstaThrust(follower.mo, 0, 0)
+			P_SetObjectMomZ(follower.mo, 0)
+			if follower.powers[pw_underwater] > 0 then
+				follower.powers[pw_underwater] = 1050
+			end
+			if follower.powers[pw_spacetime] > 0 then
+				follower.powers[pw_spacetime] = 403
+			end
+		end
 
 	--CHAT|{username}|{message}|{namecolour}
 	elseif command.name == "CHAT" then
@@ -644,7 +666,7 @@ local process_command = function (command_string)
 
 	--1UP
 	elseif command.name == "1UP" then
-		S_StartSound(player.mo, sfx_oneup)
+		P_PlayLivesJingle(player)
 		player.lives = $1 + 1
 
 	--CONFIG
