@@ -137,46 +137,12 @@ Spawns a spring directly on top of a player. Springs despawn after one second an
 
 
 
-## Player commands
+## Player stats
 
-Commands that affect the player directly. Many have a `duration`. Duration should be an integer representing the number of gameplay ticks the effect will last for. There are 35 ticks a second. E.g. 5 seconds is 175 ticks.
-
-
-### TURN
-
-Immediately turn the player 180°.
+The following four commands change the player in some way. These can be periminant or temporary depending on if the `duration` argument is used. A perminant change changes the character's base information. If a duration is specified then the change is only for the given amount of time. Duration should be an integer representing the number of gameplay ticks the effect will last for. There are 35 ticks a second. E.g. 5 seconds is 175 ticks. If the stat already has a temporary change applied to it then the change will be added to a queue and take affect when the current change (or any change ahead of it in the queue) is has expired. After all queued changes have equired the stat changes back to its perminant value.
 
 
-### REVERSE|{duration}
-
-Reverses the player's controls for the given `duration` of gameplay ticks.
-
-
-### FORCE_JUMP|{duration}
-
-Forces the player to constantly jump for the given `duration` of gameplay ticks.
-
-
-### POISON|{duration}
-
-Drains one ring per second from the player for the given `duration` of gameplay ticks.
-
-
-### SPEED_STATS|{scale}|{duration}
-
-Scales the player's speed and acceleration stats by factor `scale` for the `duration` of gameplay ticks.
-
-### JUMP_STATS|{scale}|{duration}
-
-Scales the player's jump height by factor `scale` for the `duration` of gameplay ticks.
-
-
-### SCALE|{scale}|{duration}
-
-Scale the player character's size by factor `scale` for `duration` of gameplay ticks. Scale is a decimal value.
-
-
-### CHARACTER|[palette]|[characterName]|[playerid]
+### CHARACTER|[palette]|[characterName]|[playerid]|[duration]
 
 `characterName` is the name of the character to change to. E.g. `sonic`, `tails` or `knuckles`. If not specified then a random character other than the player's current one will be chosen.
 
@@ -195,6 +161,53 @@ examples:
 `CHARACTER|colour^blue|character^knuckles` will change the player to a blue Knuckles
 `CHARACTER|colour^random|character^tails` will change the player to Tails with a random palette
 `CHARACTER|colour^red|character^sonic|playerid^1` will change the follower to a red Sonic
+
+
+### SPEED_STATS|{scale}|[duration]
+
+Scales the player's speed and acceleration stats by factor `scale` for the `duration` of gameplay ticks.
+
+
+### JUMP_STATS|{scale}|[duration]
+
+Scales the player's jump height by factor `scale` for the `duration` of gameplay ticks.
+
+
+### SCALE|{scale}|[duration]
+
+Scale the player character's size by factor `scale` for `duration` of gameplay ticks. Scale is a decimal value.
+
+
+
+
+## Player curses
+
+The following three commands affect the player negatively for a given `duration` of gameplay ticks. If a curse is already applied it will extended for the specified amount of time.
+
+
+### REVERSE|{duration}
+
+Reverses the player's controls for the given `duration` of gameplay ticks.
+
+
+### FORCE_JUMP|{duration}
+
+Forces the player to constantly jump for the given `duration` of gameplay ticks.
+
+
+### POISON|{duration}
+
+Drains one ring per second from the player for the given `duration` of gameplay ticks.
+
+
+
+## Player immediate effect
+
+These commands will have some immediate effect on the player
+
+### TURN
+
+Immediately turn the player 180°.
 
 
 ### SWAP
@@ -228,6 +241,9 @@ Give the player and extra life.
 
 Give the player air. All player momentum is stopped, the player is forced into the gasping for air state and the drowning timer is reset. This works regardless of whether the player is underwater or not. It doesn't actually spawn an air bubble, it just manipulates the player state directly. Could be used to harm the player by e.g. using it to stop all player momentum while they're travelling over a bottomless pit.
 
+
+
+## Audio commands
 
 ### SOUND|{sound}
 
