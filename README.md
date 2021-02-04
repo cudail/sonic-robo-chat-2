@@ -29,6 +29,7 @@ command_interval 1
 parser_interval 35
 spawn_distance 300
 spawn_radius 200
+spawn_safety 30
 chat_x_pos 1
 chat_y_pos 54
 chat_width 120
@@ -44,6 +45,8 @@ The `parser_interval` is how often the command file is read and commands are add
 The `spawn_distance` is how far in front of the player spawned objects like badniks and monitors will appear in in-game units. For reference Sonic is 48 units tall.
 
 The `spawn_radius` is the radius within which spawned objects will appear. Decrease this to make things spawn clustered closer together. Increase it to spread them out. Technically not a radius as it just offsets the X, Y value of the spawn, so objects spawn within a square aligned to the cardinal directions.
+
+The `spawn_safety` defines a radius around the player that if an object attempts to spawn within the command will fail. If this happens the command will get re-added to the end of the queue.
 
 The `chat_x_pos` and `chat_y_pos` are the co-ordinates for where the chat for the `CHAT` command will be achored on screen.
 
@@ -79,6 +82,8 @@ Spawned objects are intended to display a chat message from whoever spawned them
 `namecolour` is the colour to highlight the user's name in. It can be one of pink, yellow, green, blue, red, grey, orange, sky, purple, aqua, peridot, azure, brown, rosy. Defaults to yellow if not set.
 
 Most object spawning commands can also take a `scale` value. This is a decimal that adjusts the size of the object spawned. `1` will be normal sized, `0.5` will be half-sized, `2` will be double-sized, etc. Defaults to normal scale if not specified.
+
+If an object tries to spawn withing distance `spawn_safety` of the player the spawn will fail and the command will be re-added to the end of the queue.
 
 
 ### CHAT|[username]|[message]|[namecolour]

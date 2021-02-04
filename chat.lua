@@ -10,6 +10,7 @@ local chat_config = {
 	command_interval = 1, -- how long to wait between attempts to activate a command from the queue
 	spawn_distance = 300, -- how far away to spawn objects from player
 	spawn_radius = 200, -- radius to spawn objects within
+	spawn_safety = 30, -- don't spawn objects within this distance of the player
 	chat_x_pos = 1,
 	chat_y_pos = 54,
 	chat_width = 120,
@@ -333,31 +334,39 @@ local spawn_object_with_message = function(player, username, message, namecolour
 	local rrange = P_RandomRange(0, chat_config.spawn_radius)
 
 	local spawned = { scale = scale, id = object_id }
-	spawned.object = P_SpawnMobjFromMobj(player.mo, 0, 0, 50*FRACUNIT, object_id)
-	spawned.object.scale = scale
-	spawned.object.angle = FixedAngle(P_RandomRange(0,359)*FRACUNIT)
+	local object = P_SpawnMobjFromMobj(player.mo, 0, 0, 50*FRACUNIT, object_id)
+	spawned.object = object
+	object.scale = scale
+	object.angle = FixedAngle(P_RandomRange(0,359)*FRACUNIT)
 
 	local x, y, d, a = player.mo.x, player.mo.y, 0, player.mo.angle
-	while d < dist and P_TryMove(spawned.object, x, y) do
+	while d < dist and P_TryMove(object, x, y) do
 		d = $1 + 1
 		x = player.mo.x + FixedMul(d*FRACUNIT, cos(a))
 		y = player.mo.y + FixedMul(d*FRACUNIT, sin(a))
 	end
 
-	local xs, xy = spawned.object.x, spawned.object.y
+	local xs, xy = object.x, object.y
 	x, y, d, a = xs, xy, 0, FixedAngle(P_RandomRange(0,359)*FRACUNIT)
-	while d < rrange and P_TryMove(spawned.object, x, y) do
+	while d < rrange and P_TryMove(object, x, y) do
 		d = $1 + 1
 		x = xs + FixedMul(d*FRACUNIT, cos(a))
 		y = xy + FixedMul(d*FRACUNIT, sin(a))
 	end
 
+	if R_PointToDist2(player.mo.x, player.mo.y, object.x, object.y) <  chat_config.spawn_safety*FRACUNIT then
+		object.type = MT_NULL --change to null type to prevent any on-death behaviour
+		P_KillMobj(object)
+		return false --report command as failed and needs to be re-queued
+	end
+
+
 	local linelength = 40
 
-	spawned.x = spawned.object.x
-	spawned.y = spawned.object.y
-	spawned.z = spawned.object.z
-	spawned.health = spawned.object.health
+	spawned.x = object.x
+	spawned.y = object.y
+	spawned.z = object.z
+	spawned.health = object.health
 	spawned.chat = {}
 	spawned.chat.name = username
 	spawned.chat.namecolour = text_colours[namecolour] or V_YELLOWMAP
@@ -377,6 +386,8 @@ local spawn_object_with_message = function(player, username, message, namecolour
 	S_StartSound(mo, sfx_s3kcas)
 
 	table.insert(spawned_list, spawned)
+
+	return true
 end
 
 
@@ -494,7 +505,7 @@ local process_command = function (command_string)
 			return
 		end
 		log("Attempting to spawn object with ID ".. objectId .." with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'")
-		spawn_object_with_message(player, username, message, namecolour, objectId, scale)
+		return spawn_object_with_message(player, username, message, namecolour, objectId, scale)
 
 	--BADNIK|{username}|{message}|{namecolour}|[scale]
 	elseif command.name == "BADNIK" then
@@ -503,7 +514,7 @@ local process_command = function (command_string)
 		local namecolour = command.namecolour or "yellow"
 		local scale = parseDecimal(command.scale) or FRACUNIT
 		log("Attempting to spawn badnik with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'; and scale "..scale)
-		spawn_object_with_message(player, username, message, namecolour, pick_badnik(), scale)
+		return spawn_object_with_message(player, username, message, namecolour, pick_badnik(), scale)
 
 	--MONITOR|{username}|{message}|{namecolour}|[set]
 	elseif command.name == "MONITOR" then
@@ -518,7 +529,7 @@ local process_command = function (command_string)
 		end
 		if not monitor then monitor = MT_RING_BOX end
 		log("Attempting to spawn monitor with object ID ".. monitor .." from set "..monitor_set.." with username '"..username.."'; message '"..message.."'; name colour '"..namecolour.."'")
-		spawn_object_with_message(player, username, message, namecolour, monitor, scale)
+		return spawn_object_with_message(player, username, message, namecolour, monitor, scale)
 
 	--SPRING|{colour}|{orientation}|{direction}
 	elseif command.name == "SPRING" then
@@ -832,7 +843,11 @@ addHook("PreThinkFrame", function()
 		if queue and #queue > 0 then
 			local comm = queue[1]
 			table.remove(queue, 1)
-			process_command(comm)
+			local result = process_command(comm)
+			if result == false then
+				log("Command returned false, re-inserting into queue")
+				table.insert(queue, comm)
+			end
 		end
 	else
 		command_timer = $1 - 1
