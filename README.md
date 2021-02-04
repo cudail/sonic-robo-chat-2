@@ -128,7 +128,7 @@ Spawns a spring directly on top of a player. Springs despawn after one second an
 
 `orientation` can be `horizontal`, `vertical` or `diagonal`. Diagonal springs are angled upwards. Defaults to `vertical`.
 
-`direction` is the direction the spring will point relative to the player. `front` springs push the player in direction they were already facing, `back` in the opposite direction and `left` and `right` push a player orthogonal to their original facing. Defaults to `forward`.
+`direction` is the direction the spring will point relative to the player. `forward` springs push the player in direction they were already facing, `back` in the opposite direction and `left` and `right` push a player orthogonal to their original facing. Defaults to `forward`.
 
 
 
