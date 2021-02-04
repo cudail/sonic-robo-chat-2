@@ -578,11 +578,10 @@ local process_command = function (command_string)
 		local namecolour = text_colours[command.namecolour] or V_YELLOWMAP
 		table.insert(chat_messages, {username=username, message=message, colour=namecolour, timer=chat_config.chat_timeout})
 
-	--CHARACTER|[colour]|[character]|[playerId]
+	--CHARACTER|colour|character|duration
 	elseif command.name == "CHARACTER" then
 		local colour = command.colour
 		local skin = command.character
-		local playerId = tonumber(command.playerid) or 0
 		local duration = tonumber(command.duration)
 
 		if not skin or not skins[skin] then
@@ -608,13 +607,40 @@ local process_command = function (command_string)
 			player_stats.colour.timer = $1+1
 		end
 
+	--FOLLOWER|colour|character|duration
+	elseif command.name == "FOLLOWER" then
+		if not follower return end
+		local colour = command.colour
+		local skin = command.character
+		local duration = tonumber(command.duration)
+
+		if not skin or not skins[skin] then
+		local skintable = rand_entry(skins)
+		while not skintable or skintable.name == follower.mo.skin do
+			skintable = rand_entry(skins)
+		end
+			skin = skintable.name
+		end
+		local colnum = skins[skin].prefcolor
+		if colour == "random" then
+			colnum = rand_dict_entry(skin_colours)
+		elseif skin_colours[colour] ~= nil then
+			colnum = skin_colours[colour]
+		end
+		R_SetPlayerSkin(follower, skin)
+		follower.mo.color = colnum
+
 	--SWAP
 	elseif command.name == "SWAP" then
 		if player and follower then
-			local ps = player.mo.skin
-			R_SetPlayerSkin(player, follower.mo.skin)
-			R_SetPlayerSkin(follower, ps)
-			player.mo.color, follower.mo.color = follower.mo.color, player.mo.color
+			local fs = follower.mo.skin
+			local fc = follower.mo.color
+			R_SetPlayerSkin(follower, player.mo.skin)
+			follower.mo.color = player.mo.color
+			player_stats.skin.base = fs
+			player_stats.colour.base = fc
+			player_stats.skin.timer = $1+1
+			player_stats.colour.timer = $1+1
 		else
 			return
 		end

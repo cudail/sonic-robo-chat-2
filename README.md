@@ -213,11 +213,6 @@ These commands will have some immediate effect on the player
 Immediately turn the player 180°.
 
 
-### SWAP
-
-If the player has a follower it swaps the player and follower characters.
-
-
 ### SUPER|[giveemeralds]
 
 Force the player into super mode. All of the usual restrictions for turning super are in place: The player must be playing a character who can turn super (e.g. Sonic can and Tails cannot) and the player must already have all Chaos Emeralds.
@@ -244,6 +239,21 @@ Give the player and extra life.
 
 Give the player air. All player momentum is stopped, the player is forced into the gasping for air state and the drowning timer is reset. This works regardless of whether the player is underwater or not. It doesn't actually spawn an air bubble, it just manipulates the player state directly. Could be used to harm the player by e.g. using it to stop all player momentum while they're travelling over a bottomless pit.
 
+
+
+## Follower commands
+
+If playing a game with a follower character (i.e. after starting a game with Sonic and Tails) you can use the the following commands to affect the follower character.
+
+
+### FOLLOWER|[palette]|[characterName]
+
+Change the follower character. Works the same as the `CHARACTER` command described above but does not take a duration - the effect is always perminant.
+
+
+### SWAP
+
+Spawn the player and follower characters. This changes the follower to the player's current character (whether perminant or temporary) and changes the player's perminant character to the follower's characters (so if the player is temporarily changed character it won't affect the player until after that wears off).
 
 
 ## Audio commands
