@@ -582,7 +582,34 @@ local process_command = function (command_string)
 		local colour = command.colour
 		local skin = command.character
 		local playerId = tonumber(command.playerid) or 0
-		change_character(players[playerId], colour, skin)
+		local duration = tonumber(command.duration)
+
+		if not skin or not skins[skin] then
+		local skintable = rand_entry(skins)
+		while not skintable or skintable.name == player.mo.skin do
+			skintable = rand_entry(skins)
+		end
+			skin = skintable.name
+		end
+		local colnum = skins[skin].prefcolor
+		if colour == "random" then
+			colnum = rand_dict_entry(skin_colours)
+		elseif skin_colours[colour] ~= nil then
+			colnum = skin_colours[colour]
+		end
+		if duration then
+			table.insert(player.chat.skin.queue, {value=skin, duration=duration})
+			table.insert(player.chat.colour.queue, {value=colnum, duration=duration})
+		else
+			player.chat.skin.base = skin
+			player.chat.colour.base = colnum
+			player.chat.skin.timer = $1+1
+			player.chat.colour.timer = $1+1
+		end
+
+		--R_SetPlayerSkin(player, skin)
+		--player.mo.color = colnum
+		--change_character(players[playerId], colour, skin)
 
 	--SWAP
 	elseif command.name == "SWAP" then
@@ -645,6 +672,7 @@ local process_command = function (command_string)
 		local scale, dur = parseDecimal(command.scale), tonumber(command.duration)
 		if not scale then return end
 		if not dur then
+			player.chat.scale.timer = $1+1
 			player.chat.scale.base = scale
 		else
 			table.insert(player.chat.scale.queue, {value=scale, duration=dur})
@@ -655,6 +683,7 @@ local process_command = function (command_string)
 		local scale, duration = parseDecimal(command.scale), tonumber(command.duration)
 		if not scale then return end
 		if not duration then
+			player.chat.speed.timer = $1+1
 			player.chat.speed.base = scale
 		else
 			table.insert(player.chat.speed.queue, {value=scale, duration=duration})
@@ -665,6 +694,7 @@ local process_command = function (command_string)
 		local scale, duration = parseDecimal(command.scale), tonumber(command.duration)
 		if not scale then return end
 		if not duration then
+			player.chat.jump.timer = $1+1
 			player.chat.jump.base = scale
 		else
 			table.insert(player.chat.jump.queue, {value=scale, duration=duration})
