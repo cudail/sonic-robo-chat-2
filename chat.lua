@@ -654,14 +654,7 @@ local process_command = function (command_string)
 		if scale == nil or duration == nil or scale < 1 or duration < 1 then
 			return
 		end
-		speed_scale_timer = duration
-		local skin = skins[player.mo.skin]
-		player.normalspeed = FixedMul(skin.normalspeed, scale)
-		player.runspeed = FixedMul(skin.runspeed, scale)
-		player.actionspd = FixedMul(skin.actionspd, scale)
-		player.mindash = FixedMul(skin.mindash, scale)
-		player.maxdash = FixedMul(skin.maxdash, scale)
-		player.thrustfactor = FixedMul(skin.thrustfactor, scale)
+		table.insert(player.chat.speed.queue, {value=scale, duration=duration})
 
 	--JUMP_STATS|{scale}|{duration}
 	elseif command.name == "JUMP_STATS" then
@@ -669,9 +662,7 @@ local process_command = function (command_string)
 		if scale == nil or duration == nil or scale < 1 or duration < 1 then
 			return
 		end
-		jump_scale_timer = duration
-		local skin = skins[player.mo.skin]
-		player.jumpfactor = FixedMul(skin.jumpfactor, scale)
+		table.insert(player.chat.jump.queue, {value=scale, duration=duration})
 
 	--RING
 	elseif command.name == "RING" then
@@ -906,28 +897,6 @@ addHook("PreThinkFrame", function()
 			P_DoJump(player)
 		end
 	end
-
-	if speed_scale_timer == 1 then
-		speed_scale_timer = 0
-		local skin = skins[player.mo.skin]
-		player.normalspeed = skin.normalspeed
-		player.runspeed = skin.runspeed
-		player.actionspd = skin.actionspd
-		player.mindash = skin.mindash
-		player.maxdash = skin.maxdash
-		player.thrustfactor = skin.thrustfactor
-	elseif speed_scale_timer > 0 then
-		speed_scale_timer = $1 - 1
-	end
-
-	if jump_scale_timer == 1 then
-		jump_scale_timer = 0
-		local skin = skins[player.mo.skin]
-		player.jumpfactor = skin.jumpfactor
-	elseif jump_scale_timer > 0 then
-		jump_scale_timer = $1 - 1
-	end
-
 end)
 
 
