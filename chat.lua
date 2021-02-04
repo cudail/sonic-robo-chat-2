@@ -579,12 +579,11 @@ local process_command = function (command_string)
 
 	--SCALE|{scale}|{duration}
 	elseif command.name == "SCALE" then
-		local scale, dur = command.scale, command.duration
+		local scale, dur = parseDecimal(command.scale), tonumber(command.duration)
 		if not scale then return end
 		if not dur then return end
 		log("Attemtping to scale player by "..scale.." for "..dur.." ticks")
-		player.chat.scaletimer = $1 + dur
-		player.mo.destscale = parseDecimal(scale)
+		table.insert(player.chat.scale.queue, {value=scale, duration=dur})
 
 	--CHARACTER|[colour]|[character]|[playerId]
 	elseif command.name == "CHARACTER" then
@@ -737,6 +736,32 @@ end
 -----------
 
 
+local apply_skin = function(player, skin)
+	R_SetPlayerSkin(player, skin)
+end
+
+local apply_colour = function(player, colour)
+	player.mo.color = colour
+end
+
+local apply_scale = function(player, scale)
+	player.mo.destscale = scale
+end
+
+local apply_speed = function(player, scale)
+	local skin = skins[player.mo.skin]
+	player.normalspeed = FixedMul(skin.normalspeed, scale)
+	player.runspeed = FixedMul(skin.runspeed, scale)
+	player.actionspd = FixedMul(skin.actionspd, scale)
+	player.mindash = FixedMul(skin.mindash, scale)
+	player.maxdash = FixedMul(skin.maxdash, scale)
+	player.thrustfactor = FixedMul(skin.thrustfactor, scale)
+end
+
+local apply_jump = function(player, scale)
+	player.jumpfactor = FixedMul(skins[player.mo.skin].jumpfactor, scale)
+end
+
 
 addHook("PreThinkFrame", function()
 	if paused or menuactive or gamemap == titlemap then
@@ -758,15 +783,28 @@ addHook("PreThinkFrame", function()
 	end
 
 	if player.chat == nil then
-		player.chat = {scaletimer = 0}
+		player.chat = {
+			skin = { base = player.mo.skin, timer = 0, queue = {}, update = apply_skin },
+			colour = { base = player.mo.color, timer = 0, queue = {}, update = apply_colour },
+			scale = { base = FRACUNIT, timer = 0, queue = {}, update = apply_scale },
+			speed = { base = FRACUNIT, timer = 0, queue = {}, update = apply_speed },
+			jump = { base = FRACUNIT, timer = 0, queue = {}, update = apply_jump }
+		}
 		read_config()
-		--write_config()
 	end
 
-	if player.chat.scaletimer > 0 then
-		player.chat.scaletimer = $1 - 1
-	elseif player.chat.scaletimer == 0 then
-		player.mo.destscale = FRACUNIT
+	for name, stat in pairs(player.chat) do
+		if stat.timer > 0
+			stat.timer = $1 - 1
+		elseif #stat.queue > 0 then
+			local nxt = stat.queue[1]
+			stat.update(player, nxt.value)
+			stat.timer = nxt.duration
+			table.remove(stat.queue, 1)
+		elseif stat.timer == 0 then
+			stat.update(player, stat.base)
+			stat.timer = -1
+		end
 	end
 
 	local i = 1
