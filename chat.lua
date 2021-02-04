@@ -31,8 +31,7 @@ local spawned_spring_list = {}
 
 local control_reverse_timer = 0
 local force_jump_timer = 0
-local speed_scale_timer = 0
-local jump_scale_timer = 0
+local poison_timer = 0
 
 local track_playing = true
 local track_playing_timer = 0
@@ -659,6 +658,15 @@ local process_command = function (command_string)
 			return
 		end
 
+	--POISON|{duration}
+	elseif command.name == "POISON" then
+		local duration = tonumber(command.duration)
+		if duration then
+			poison_timer = $1 + duration
+		else
+			return
+		end
+
 	--TURN
 	elseif command.name == "TURN" then
 		player.mo.angle = $1 + ANGLE_180
@@ -801,7 +809,6 @@ addHook("PreThinkFrame", function()
 	end
 
 	if player_stats.skin == nil then
-		print("!!!!!!!!!!!!!")
 		player_stats = {
 			skin = { base = player.mo.skin, timer = 0, queue = {}, update = apply_skin },
 			colour = { base = player.mo.color, timer = 0, queue = {}, update = apply_colour },
@@ -924,6 +931,14 @@ addHook("PreThinkFrame", function()
 		player.cmd.forwardmove = - $1
 		player.cmd.sidemove = - $1
 		player.cmd.angleturn = - $1
+	end
+
+	if poison_timer > 0 then
+		poison_timer = $1 - 1
+		if poison_timer % 35 == 0 and player.rings > 0 then
+			player.rings = $1 - 1
+			S_StartSound(player.mo, sfx_unring)
+		end
 	end
 
 	if force_jump_timer > 0 then
