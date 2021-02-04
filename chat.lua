@@ -645,7 +645,7 @@ local process_command = function (command_string)
 	elseif command.name == "REVERSE" then
 		local duration = tonumber(command.duration)
 		if duration then
-			control_reverse_timer = duration
+			control_reverse_timer = $1 + duration
 		else
 			return
 		end
@@ -654,7 +654,7 @@ local process_command = function (command_string)
 	elseif command.name == "FORCE_JUMP" then
 		local duration = tonumber(command.duration)
 		if duration then
-			force_jump_timer = duration
+			force_jump_timer = $1 + duration
 		else
 			return
 		end
@@ -799,7 +799,7 @@ addHook("PreThinkFrame", function()
 	if player.playerstate ~= PST_LIVE or player.pflags & PF_FINISHED > 0 or player.exiting > 0 then
 		return
 	end
-	
+
 	if player_stats.skin == nil then
 		print("!!!!!!!!!!!!!")
 		player_stats = {
