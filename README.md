@@ -142,15 +142,13 @@ Spawns a spring directly on top of a player. Springs despawn after one second an
 The following four commands change the player in some way. These can be periminant or temporary depending on if the `duration` argument is used. A perminant change changes the character's base information. If a duration is specified then the change is only for the given amount of time. Duration should be an integer representing the number of gameplay ticks the effect will last for. There are 35 ticks a second. E.g. 5 seconds is 175 ticks. If the stat already has a temporary change applied to it then the change will be added to a queue and take affect when the current change (or any change ahead of it in the queue) is has expired. After all queued changes have equired the stat changes back to its perminant value.
 
 
-### CHARACTER|[palette]|[characterName]|[playerid]|[duration]
+### CHARACTER|[palette]|[characterName]|[duration]
 
 `characterName` is the name of the character to change to. E.g. `sonic`, `tails` or `knuckles`. If not specified then a random character other than the player's current one will be chosen.
 
 `palette` is the new colour palette. If not specified the palette will change to the default palette of character being changed to. If it is set to `random` then a random palette will be chosen from the list of all valid palettes. Otherwise it can be one of the following:
 
 white, bone, cloudy, grey, silver, carbon, jet, black, aether, slate, bluebell, pink, yogurt, brown, bronze, tan, beige, moss, azure, lavender, ruby, salmon, red, crimson, flame, ketchup, peachy, quail, sunset, copper, apricot, orange, rust, gold, sandy, yellow, olive, lime, peridot, apple, green, forest, emerald, mint, seafoam, aqua, teal, wave, cyan, sky, cerulean, icy, sapphire, cornflower, blue, cobalt, vapor, dusk, pastel, purple, bubblegum, magenta, neon, violet, lilac, plum, raspberry, rosy
-
-`playerid` is the ID number of the player object to change. If not specified this will target player `0`, i.e. you. If you are start a game with Sonic and Tails you can target Tails/the follower character by setting this to `1` instead. Because this mod doesn't work with online games setting it to any other value will not be useful. You can't spawn an AI player after starting a game so if you want to be able to have a follower follower character make sure to start a game with Sonic and Tails.
 
 examples:
 
@@ -160,22 +158,27 @@ examples:
 `CHARACTER|character^amy` will change the player to Amy with her normal palette
 `CHARACTER|colour^blue|character^knuckles` will change the player to a blue Knuckles
 `CHARACTER|colour^random|character^tails` will change the player to Tails with a random palette
-`CHARACTER|colour^red|character^sonic|playerid^1` will change the follower to a red Sonic
 
 
 ### SPEED_STATS|{scale}|[duration]
 
-Scales the player's speed and acceleration stats by factor `scale` for the `duration` of gameplay ticks.
+Scales the player's speed and acceleration stats by factor `scale`.
+
+Example: `SPEED_STATS|scale^2|duration^105` will double the player's speed and acceleration for three seconds.
 
 
 ### JUMP_STATS|{scale}|[duration]
 
-Scales the player's jump height by factor `scale` for the `duration` of gameplay ticks.
+Scales the player's jump height by factor `scale`.
+
+Example: `JUMP_STATS|scale^0.5|duration^105` will half the player's jump height for three seconds.
 
 
 ### SCALE|{scale}|[duration]
 
-Scale the player character's size by factor `scale` for `duration` of gameplay ticks. Scale is a decimal value.
+Scale the player character's size by factor `scale`.
+
+Example: `SCALE|scale^2|duration^105` will double the player's size for three seconds.
 
 
 
