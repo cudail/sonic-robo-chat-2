@@ -741,7 +741,7 @@ local process_command = function (command_string)
 	elseif command.name == "UNRING" then
 		if player.rings > 0 then
 			player.rings = $1 - 1
-			S_StartSound(player.mo, sfx_unring)
+			S_StartSoundAtVolume(player.mo, sfx_unring, 127)
 		end
 
 	--1UP
@@ -963,7 +963,7 @@ addHook("PreThinkFrame", function()
 		poison_timer = $1 - 1
 		if poison_timer % 35 == 0 and player.rings > 0 then
 			player.rings = $1 - 1
-			S_StartSound(player.mo, sfx_unring)
+			S_StartSoundAtVolume(player.mo, sfx_unring, 127)
 		end
 	end
 
