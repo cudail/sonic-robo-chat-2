@@ -577,14 +577,6 @@ local process_command = function (command_string)
 		local namecolour = text_colours[command.namecolour] or V_YELLOWMAP
 		table.insert(chat_messages, {username=username, message=message, colour=namecolour, timer=chat_config.chat_timeout})
 
-	--SCALE|{scale}|{duration}
-	elseif command.name == "SCALE" then
-		local scale, dur = parseDecimal(command.scale), tonumber(command.duration)
-		if not scale then return end
-		if not dur then return end
-		log("Attemtping to scale player by "..scale.." for "..dur.." ticks")
-		table.insert(player.chat.scale.queue, {value=scale, duration=dur})
-
 	--CHARACTER|[colour]|[character]|[playerId]
 	elseif command.name == "CHARACTER" then
 		local colour = command.colour
@@ -648,21 +640,35 @@ local process_command = function (command_string)
 		player.mo.momx = - $1
 		player.mo.momy = - $1
 
+	--SCALE|{scale}|{duration}
+	elseif command.name == "SCALE" then
+		local scale, dur = parseDecimal(command.scale), tonumber(command.duration)
+		if not scale then return end
+		if not dur then
+			player.chat.scale.base = scale
+		else
+			table.insert(player.chat.scale.queue, {value=scale, duration=dur})
+		end
+
 	--SPEED_STATS|{scale}|{duration}
 	elseif command.name == "SPEED_STATS" then
 		local scale, duration = parseDecimal(command.scale), tonumber(command.duration)
-		if scale == nil or duration == nil or scale < 1 or duration < 1 then
-			return
+		if not scale then return end
+		if not duration then
+			player.chat.speed.base = scale
+		else
+			table.insert(player.chat.speed.queue, {value=scale, duration=duration})
 		end
-		table.insert(player.chat.speed.queue, {value=scale, duration=duration})
 
 	--JUMP_STATS|{scale}|{duration}
 	elseif command.name == "JUMP_STATS" then
 		local scale, duration = parseDecimal(command.scale), tonumber(command.duration)
-		if scale == nil or duration == nil or scale < 1 or duration < 1 then
-			return
+		if not scale then return end
+		if not duration then
+			player.chat.jump.base = scale
+		else
+			table.insert(player.chat.jump.queue, {value=scale, duration=duration})
 		end
-		table.insert(player.chat.jump.queue, {value=scale, duration=duration})
 
 	--RING
 	elseif command.name == "RING" then
