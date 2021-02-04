@@ -19,6 +19,8 @@ local chat_config = {
 	log = 0
 }
 
+local oldmap = 0
+
 local parser_timer = chat_config.parser_interval
 local command_timer = chat_config.command_interval
 local queue = {}
@@ -988,15 +990,18 @@ end, "game")
 
 addHook("MapLoad", function(mapnum)
 	changing_map = false
-	for i, s in pairs(spawned_list) do
-		s.object = P_SpawnMobj(s.x, s.y, s.z, s.id)
-		s.object.scale = s.scale
-		s.object.angle = FixedAngle(P_RandomRange(0,359)*FRACUNIT)
-		s.object.health = s.health
+	if oldmap == gamemap then
+		for i, s in pairs(spawned_list) do
+			s.object = P_SpawnMobj(s.x, s.y, s.z, s.id)
+			s.object.scale = s.scale
+			s.object.angle = FixedAngle(P_RandomRange(0,359)*FRACUNIT)
+			s.object.health = s.health
+		end
 	end
 end)
 
 
 addHook("MapChange", function(mapnum)
 	changing_map = true
+	oldmap = gamemap
 end)
