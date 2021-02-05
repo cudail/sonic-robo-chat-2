@@ -452,7 +452,15 @@ local log_player_stats = function()
 		file:write( "follower " .. follower.mo.skin .. "\r\n")
 		file:write( "follower_colour " .. follower.mo.color .. "\r\n")
 	end
+	file:close()
 
+
+	file = io.openlocal("chat_player_queues.txt", "w+")
+	for name, stat in pairs(player_stats) do
+		for i, item in pairs(stat.queue) do
+			file:write(name .. "_queue " .. i .. " " .. item.value .. " " .. item.duration .. "\r\n")
+		end
+	end
 	file:close()
 end
 
