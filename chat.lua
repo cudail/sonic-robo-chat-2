@@ -16,6 +16,7 @@ local chat_config = {
 	chat_width = 120,
 	chat_lines = 29,
 	chat_timeout = TICRATE*10,
+	stat_print_delay = TICRATE,
 	log = 0
 }
 
@@ -799,8 +800,11 @@ local process_command = function (command_string)
 	elseif command.name == "CONFIG" then
 		local setting, value = command.setting, tonumber(command.value)
 		if not setting then return end
-		if not value then return end
-		if not chat_config[setting] then return end
+		if value == nil then return end
+		if chat_config[setting] == nil then
+			log("no setting '" .. setting .. "' found in config")
+			return
+		end
 		log("Updating config setting '"..setting.."' to "..value)
 		chat_config[setting] = value
 		write_config()
@@ -881,7 +885,9 @@ addHook("PreThinkFrame", function()
 		S_SetMusicPosition(normal_music_position)
 	end
 
-	log_player_stats()
+	if chat_config.stat_print_delay > -1 and (chat_config.stat_print_delay == 0 or leveltime % chat_config.stat_print_delay == 0) then
+		log_player_stats()
+	end
 
 	for name, stat in pairs(player_stats) do
 		if stat.timer > 0
