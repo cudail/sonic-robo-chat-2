@@ -260,7 +260,7 @@ local log = function(message)
 		print(message)
 	elseif chat_config.log == 2 then
 		local file = io.openlocal(log_file_name, "a")
-		file:write(message .. "\n")
+		file:write(message .. "\r\n")
 		file:close()
 	end
 end
@@ -415,7 +415,7 @@ end
 local write_config = function()
 	local file = io.openlocal(config_file_name, "w+")
 	for k, v in pairs(chat_config) do
-		file:write(k .. " " .. chat_config[k] .. "\n")
+		file:write(k .. " " .. chat_config[k] .. "\r\n")
 	end
 	file:close()
 end
@@ -432,6 +432,27 @@ local read_config = function()
 			end
 		end
 	end
+	file:close()
+end
+
+
+local log_player_stats = function()
+	local file = io.openlocal("chat_player_stats.txt", "w+")
+	for name, stat in pairs(player_stats) do
+		file:write(name .. "_base " .. stat.base .. "\r\n")
+		file:write(name .. "_current " .. stat.current .. "\r\n")
+		file:write(name .. "_timer " .. stat.timer .. "\r\n")
+	end
+	file:write( "poison_timer " .. poison_timer .. "\r\n")
+	file:write( "control_reverse_timer " .. control_reverse_timer	 .. "\r\n")
+	file:write( "force_jump_timer " .. force_jump_timer .. "\r\n")
+	local follower = players[1]
+
+	if follower then
+		file:write( "follower " .. follower.mo.skin .. "\r\n")
+		file:write( "follower_colour " .. follower.mo.color .. "\r\n")
+	end
+
 	file:close()
 end
 
@@ -836,11 +857,11 @@ addHook("PreThinkFrame", function()
 
 	if player_stats.skin == nil then
 		player_stats = {
-			skin = { base = player.mo.skin, timer = 0, queue = {}, update = apply_skin },
-			colour = { base = player.mo.color, timer = 0, queue = {}, update = apply_colour },
-			scale = { base = FRACUNIT, timer = 0, queue = {}, update = apply_scale },
-			speed = { base = FRACUNIT, timer = 0, queue = {}, update = apply_speed },
-			jump = { base = FRACUNIT, timer = 0, queue = {}, update = apply_jump }
+			skin = { base = player.mo.skin, current = player.mo.skin, timer = 0, queue = {}, update = apply_skin },
+			colour = { base = player.mo.color, current = player.mo.color, timer = 0, queue = {}, update = apply_colour },
+			scale = { base = FRACUNIT, current = FRACUNIT, timer = 0, queue = {}, update = apply_scale },
+			speed = { base = FRACUNIT, current = FRACUNIT, timer = 0, queue = {}, update = apply_speed },
+			jump = { base = FRACUNIT, current = FRACUNIT, timer = 0, queue = {}, update = apply_jump }
 		}
 	end
 
@@ -852,16 +873,20 @@ addHook("PreThinkFrame", function()
 		S_SetMusicPosition(normal_music_position)
 	end
 
+	log_player_stats()
+
 	for name, stat in pairs(player_stats) do
 		if stat.timer > 0
 			stat.timer = $1 - 1
 		elseif #stat.queue > 0 then
 			local nxt = stat.queue[1]
 			stat.update(player, nxt.value)
+			stat.current = nxt.value
 			stat.timer = nxt.duration
 			table.remove(stat.queue, 1)
 		elseif stat.timer == 0 then
 			stat.update(player, stat.base)
+			stat.current = stat.base
 			stat.timer = -1
 		end
 	end
