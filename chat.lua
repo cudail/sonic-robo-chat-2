@@ -1113,12 +1113,15 @@ end, "game")
 addHook("MapLoad", function(mapnum)
 	changing_map = false
 	read_config()
+	local player = players[0]
 	if oldmap == gamemap then
 		for i, s in pairs(spawned_list) do
-			s.object = P_SpawnMobj(s.x, s.y, s.z, s.id)
-			s.object.scale = s.scale
-			s.object.angle = FixedAngle(P_RandomRange(0,359)*FRACUNIT)
-			s.object.health = s.health
+			if R_PointToDist2(player.mo.x, player.mo.y, s.x, s.y) <  chat_config.spawn_safety*FRACUNIT then
+				s.object = P_SpawnMobj(s.x, s.y, s.z, s.id)
+				s.object.scale = s.scale
+				s.object.angle = FixedAngle(P_RandomRange(0,359)*FRACUNIT)
+				s.object.health = s.health
+			end
 		end
 	end
 	if player_stats then
