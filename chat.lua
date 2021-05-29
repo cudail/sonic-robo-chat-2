@@ -1,5 +1,6 @@
 freeslot("sfx_unring")
 
+sfxinfo[sfx_unring].caption = "Unring"
 
 ---------------
 -- variables --
