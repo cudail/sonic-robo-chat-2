@@ -962,6 +962,13 @@ addHook("PreThinkFrame", function()
 
 		local file = io.openlocal(command_file_name, "r")
 
+		if file == nil then
+			file = io.openlocal(command_file_name, "w+")
+			file:write("")
+			file:close()
+			file = io.openlocal(command_file_name, "r")
+		end
+
 		local foundcommand = false
 		for line in file:lines() do
 			table.insert(queue, line)
