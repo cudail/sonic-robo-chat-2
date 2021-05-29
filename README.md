@@ -145,7 +145,7 @@ Spawns a spring directly on top of a player. Springs despawn after one second an
 The following four commands change the player in some way. These can be periminant or temporary depending on if the `duration` argument is used. A perminant change changes the character's base information. If a duration is specified then the change is only for the given amount of time. Duration should be an integer representing the number of gameplay ticks the effect will last for. There are 35 ticks a second. E.g. 5 seconds is 175 ticks. If the stat already has a temporary change applied to it then the change will be added to a queue and take affect when the current change (or any change ahead of it in the queue) is has expired. After all queued changes have equired the stat changes back to its perminant value.
 
 
-### CHARACTER|[palette]|[characterName]|[duration]
+### CHARACTER|[colour]|[character]|[duration]
 
 `characterName` is the name of the character to change to. E.g. `sonic`, `tails` or `knuckles`. If not specified then a random character other than the player's current one will be chosen.
 
