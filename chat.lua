@@ -834,7 +834,11 @@ end
 
 
 local apply_skin = function(player, skin)
-	R_SetPlayerSkin(player, skin)
+	if R_SkinUsable(player, skin) then
+		R_SetPlayerSkin(player, skin)
+	else
+		log("cannot change skin to " .. skin)
+	end
 end
 
 local apply_colour = function(player, colour)
