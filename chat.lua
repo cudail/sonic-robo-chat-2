@@ -424,6 +424,11 @@ end
 
 local read_config = function()
 	local file = io.openlocal(config_file_name, "r")
+	if file == nil then
+		write_config()
+		return
+	end
+
 	for line in file:lines() do
 		for k, v in pairs(chat_config) do
 			local config_match = line:match(k .. " (%d+)")
