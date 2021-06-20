@@ -799,7 +799,7 @@ local process_command = function (command_string)
 			normal_music_position = S_GetMusicPosition()
 			S_ChangeMusic(music, false)
 			track_playing = true
-			track_playing_timer = 1
+			track_playing_timer = 10
 		end
 
 	--CONFIG
