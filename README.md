@@ -20,7 +20,7 @@ and running it. You can see what chat commands are available there.
 
 [Sonic Robo Blast 2]: https://www.srb2.org/
 [how to load a WAD file]: https://wiki.srb2.org/wiki/WAD_file#Loading_WAD_files
-[chat control client]: https://github.com/oakreef/chat-rb2-client
+[chat control client]: https://github.com/oakreef/sonic-robo-chat-2-client
 
 
 ## Making your own chat client
