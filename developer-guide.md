@@ -2,12 +2,12 @@ This mod reads commands from the file `[srb2_path]/luafiles/chat_commands.txt` a
 
 `SPRING|colour^red|orientation^vertical`
 
-First is an all-caps command name followed by a set arguments delimited by a pipecharacter `|`. Each argument consists of a name and value with the latter separated from the former with a caret character `^`. In this example the `SPRING` command is being passed in with the arguments `colour` and `orientation` with values `red` and `vertical` respectively.
+First is an all-caps command name followed by a set arguments delimited by a pipe character `|`. Each argument consists of a name and value with the latter separated from the former with a caret character `^`. In this example the `SPRING` command is being passed in with the arguments `colour` and `orientation` with values `red` and `vertical` respectively.
 
 
 # Writing to the command file
 
-The mod attempts to read from the file `[srb2_path]/luafiles/chat_commands.txt` once every second. If it finds any non-empty lines it reads them into a queue and then wipes the file. If it finds nothing take in it won't bother trying to overwrite the command file. The reading in of commands and wiping of the file are two separate operations. They should happen immediately after each other, but it's possible that a command could be written to the file between the read and write operation, which means it would be missed.
+The mod attempts to read from the file `[srb2_path]/luafiles/chat_commands.txt` once every second. If it finds any non-empty lines it reads them into a queue and then wipes the file. The reading in of commands and wiping of the file are two separate operations. They should happen immediately after each other, but it's possible that a command could be written to the file between the read and write operation, which means it would be missed.
 
 The Lua IO library that SRB2 exposes is very limited and cannot put a lock on a file, delete or rename a file. This means options for preventing missed commands are limited. As a way to minimise it I would suggest having the parser client that's writing to the command file not write commands immediately when they come in. Instead add them to a queue. Then periodically check if the command file is empty. If it is not empty then do not write to it and wait until the mod reads from it and wipes it. If it is empty then write all queued commands to it at once.
 
