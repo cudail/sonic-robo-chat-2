@@ -5,6 +5,8 @@ Sonic Robo Blast 2. With it you can stream Sonic Robo Blast 2 and allow your
 chat to change your character, spawn enemies and other objects, give or take
 rings, and more.
 
+This mod will not work with network games. Don't try to use it with multiplayer.
+
 
 ## Installation
 
