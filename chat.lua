@@ -815,9 +815,16 @@ local process_command = function (command_string)
 		chat_config[setting] = value
 		write_config()
 
+	--KILLALL
+	elseif command.name == "KILLALL" then
+		for i=1, #spawned_list do
+			P_KillMobj(spawned_list[i].object)
+		end
+
 	--DESPAWN
 	elseif command.name == "DESPAWN" then
 		while #spawned_list > 0 do
+			spawned_list[1].object.type = MT_NULL
 			P_KillMobj(spawned_list[1].object)
 			table.remove(spawned_list, 1)
 		end
