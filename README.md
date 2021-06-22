@@ -123,9 +123,14 @@ Spawn an item monitor in front of the player.
 * `shield` spawn a shield monitor
 
 
+### KILLALL
+
+Kills everything that was spawned via chat commands. This plays the normal death routines for the object. Badniks and monitors will pop, etc.
+
+
 ### DESPAWN
 
-Destroys everything that was spawned via the chat commands. Can be used to clear things up if something that was spawned is causing problems.
+Despawns everything that was spawned via chat commands. Goes further than the KILLALL command and removes them without playing the normal death routines. Can be used to clear things up if something that was spawned is causing problems.
 
 
 ### SPRING|[colour]|[orientation]|[direction]
