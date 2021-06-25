@@ -49,8 +49,6 @@ The `spawn_radius` is the radius within which spawned objects will appear. Decre
 
 The `spawn_safety` defines a radius around the player that if an object attempts to spawn within the command will fail. If this happens the command will get re-added to the end of the queue.
 
-`stat_print_delay` does something.
-
 The `chat_x_pos` and `chat_y_pos` are the co-ordinates for where the chat for the `CHAT` command will be achored on screen.
 
 The `chat_width` is the max width in pixels (not characters) for the chat display.
