@@ -67,4 +67,4 @@ The `log` controls debug logging for the mod. The default value of `0` will resu
 
 If you want to use the mod with your own client see the [Developer's Guide].
 
-[Developer's Guide]: Development-guide.md
+[Developer's Guide]: developer-guide.md
