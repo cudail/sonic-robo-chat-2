@@ -1042,7 +1042,7 @@ end)
 hud.add( function(v, player, camera)
 	local font = "small-thin"
 	local lineheight = 4
-	local messageflags = V_SNAPTOLEFT|V_SNAPTOTOP
+	local messageflags = V_SNAPTOLEFT|V_SNAPTOTOP|V_ALLOWLOWERCASE
 	local i, l = 1, 0
 	while l < chat_config.chat_lines and i <= #chat_messages do
 		local message = chat_messages[i]
@@ -1050,7 +1050,7 @@ hud.add( function(v, player, camera)
 		local name = message.username
 		local text = message.message
 		local colour = message.colour
-		local nameflags = V_SNAPTOLEFT|V_SNAPTOTOP|colour
+		local nameflags = V_SNAPTOLEFT|V_SNAPTOTOP|colour|V_ALLOWLOWERCASE
 		local nametext = name .. ": "
 		local namewidth = v.stringWidth(nametext, nameflags, "thin")/2
 		local x = chat_config.chat_x_pos
@@ -1120,12 +1120,12 @@ hud.add( function(v, player, camera)
 				lineheight = 4
 			end
 
-			local nameflags = V_SNAPTOLEFT|V_SNAPTOTOP
+			local nameflags = V_SNAPTOLEFT|V_SNAPTOTOP|V_ALLOWLOWERCASE
 			nameflags = $1 | s.chat.namecolour
 
 			v.drawString(hpos, vpos-lineheight*FRACUNIT*#s.chat.text, s.chat.name, nameflags, namefont)
 
-			local textflags = V_SNAPTOLEFT|V_SNAPTOTOP
+			local textflags = V_SNAPTOLEFT|V_SNAPTOTOP|V_ALLOWLOWERCASE
 			for i=1, #s.chat.text do
 				v.drawString(hpos, vpos-lineheight*FRACUNIT*(#s.chat.text-i), s.chat.text[i], textflags, textfont)
 			end
