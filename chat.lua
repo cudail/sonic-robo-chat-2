@@ -1152,7 +1152,10 @@ addHook("MapLoad", function(mapnum)
 			end
 		end
 	end
-	if player_stats then
+
+	if titlemapinaction then
+		player_stats = {}
+	elseif player_stats then
 		for name, stat in pairs(player_stats) do
 			stat.timer = $1 + 1
 		end
