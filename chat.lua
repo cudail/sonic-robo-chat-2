@@ -854,6 +854,7 @@ end
 
 local apply_colour = function(player, colour)
 	player.mo.color = colour
+	player.skincolor = colour
 end
 
 local apply_scale = function(player, scale)
