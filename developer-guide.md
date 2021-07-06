@@ -45,7 +45,7 @@ The `parser_interval` is how often the command file is read and commands are add
 
 The `spawn_distance` is how far in front of the player spawned objects like badniks and monitors will appear in in-game units. For reference Sonic is 48 units tall.
 
-The `spawn_radius` is the radius within which spawned objects will appear. Decrease this to make things spawn clustered closer together. Increase it to spread them out. Technically not a radius as it just offsets the X, Y value of the spawn, so objects spawn within a square aligned to the cardinal directions.
+The `spawn_radius` is the radius within which spawned objects will appear. Decrease this to make things spawn clustered closer together. Increase it to spread them out.
 
 The `spawn_safety` defines a radius around the player that if an object attempts to spawn within the command will fail. If this happens the command will get re-added to the end of the queue.
 
