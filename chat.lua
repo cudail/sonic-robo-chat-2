@@ -544,6 +544,16 @@ local process_command = function (command_string)
 		local scale = parseDecimal(command.scale) or FRACUNIT
 		local objectId = tonumber(command.objectid)
 		if not objectId then
+			local object_name = command.objectid
+			if object_name ~= nil then
+				object_name = $1:upper()
+				if #object_name > 3 and object_name:sub(1,3) ~= "MT_" then
+					object_name = "MT_" .. $1
+				end
+				objectId = _G[object_name]
+			end
+		end
+		if objectId == nil then
 			log("No object ID for OBJECT command")
 			return
 		end
