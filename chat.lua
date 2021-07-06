@@ -792,6 +792,16 @@ local process_command = function (command_string)
 	--SOUND
 	elseif command.name == "SOUND" then
 		local sound = tonumber(command.sound)
+		if sound == nil then
+			local sound_name = command.sound
+			if sound_name ~= nil then
+				sound_name = $1:lower()
+				if #sound_name > 4 and sound_name:sub(1,4) ~= "sfx_" then
+					sound_name = "sfx_" .. $1
+				end
+				sound = _G[sound_name]
+			end
+		end
 		if sound ~= nil then
 			S_StartSound(player.mo, sound)
 		end
