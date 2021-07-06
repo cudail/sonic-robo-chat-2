@@ -336,36 +336,39 @@ end
 
 
 local spawn_object_with_message = function(player, username, message, namecolour, object_id, scale)
+	local a = player.mo.angle
 	local dist = chat_config.spawn_distance
 	local rrange = P_RandomRange(0, chat_config.spawn_radius)
 
+	-- spawn a test object first to see if we can spawn what we want in a safe place
+	-- if we did this with a real object some types of object, monitors in paritcular,
+	-- would crush the player if they tried to  move through a space that the player
+	-- occupies
+	local testObject = P_SpawnMobjFromMobj(player.mo, 0, 0, 50*FRACUNIT, MT_RING)
+	testObject.movedir = player.mo.angle
+
+	local ra = FixedAngle(P_RandomRange(0,359)*FRACUNIT)
+	local x = testObject.x + FixedMul(dist*FRACUNIT, cos(a)) + FixedMul(rrange*FRACUNIT, cos(ra))
+	local y = testObject.y + FixedMul(dist*FRACUNIT, sin(a)) + FixedMul(rrange*FRACUNIT, sin(ra))
+
+	local moved = P_TryMove(testObject, x, y)
+
+
+	-- if we can't draw a line from the player to the spawn location then return
+	-- false, signalling the command failed and the command should be put back
+	-- on the queue
+	if not moved then
+		P_RemoveMobj(testObject)
+		return false
+	end
+
+	-- remove test object and spawn real object
 	local spawned = { scale = scale, id = object_id }
-	local object = P_SpawnMobjFromMobj(player.mo, 0, 0, 50*FRACUNIT, object_id)
+	local object = P_SpawnMobjFromMobj(testObject, 0, 0, 0, object_id)
+	P_RemoveMobj(testObject)
 	spawned.object = object
 	object.scale = scale
 	object.angle = FixedAngle(P_RandomRange(0,359)*FRACUNIT)
-
-	local x, y, d, a = player.mo.x, player.mo.y, 0, player.mo.angle
-	while d < dist and P_TryMove(object, x, y) do
-		d = $1 + 1
-		x = player.mo.x + FixedMul(d*FRACUNIT, cos(a))
-		y = player.mo.y + FixedMul(d*FRACUNIT, sin(a))
-	end
-
-	local xs, xy = object.x, object.y
-	x, y, d, a = xs, xy, 0, FixedAngle(P_RandomRange(0,359)*FRACUNIT)
-	while d < rrange and P_TryMove(object, x, y) do
-		d = $1 + 1
-		x = xs + FixedMul(d*FRACUNIT, cos(a))
-		y = xy + FixedMul(d*FRACUNIT, sin(a))
-	end
-
-	if R_PointToDist2(player.mo.x, player.mo.y, object.x, object.y) <  chat_config.spawn_safety*FRACUNIT then
-		object.type = MT_NULL --change to null type to prevent any on-death behaviour
-		P_KillMobj(object)
-		return false --report command as failed and needs to be re-queued
-	end
-
 
 	local linelength = 40
 
