@@ -356,8 +356,8 @@ local spawn_object_with_message = function(player, username, message, namecolour
 
 	-- if we can't draw a line from the player to the spawn location then return
 	-- false, signalling the command failed and the command should be put back
-	-- on the queue
-	if not moved then
+	-- on the queue. Also fail if it's within the spawn safety radius
+	if (not moved) or (R_PointToDist2(player.mo.x, player.mo.y, x, y) < chat_config.spawn_safety*FRACUNIT) then
 		P_RemoveMobj(testObject)
 		return false
 	end
