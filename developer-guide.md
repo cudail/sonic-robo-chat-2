@@ -94,9 +94,11 @@ Displays a message on the the screen. Intended for showing chat in-game. Remembe
 
 ### OBJECT|{objectid}|[username]|[message]|[namecolour]|[scale]
 
-Spawn a object of with with object type number `objectId` in front of the player. A list of objects and their IDs can be found here: https://wiki.srb2.org/wiki/List_of_Object_types
+Spawn an object identified by `objectId` in front of hte player. This can be an ID number or name. The name is case insensitive and the MT_ prefix is optional. A list of objects and their IDs can be found here: https://wiki.srb2.org/wiki/List_of_Object_types
 
 Example: `OBJECT|objectid^61|username^robotnik|message^get a load of this|namecolour^orange|scale^2.5` will spawn the Egg Mobile (boss of Green Flower Zone) two and a half times larger than normal
+
+`OBJECT|objectid^MT_EGGMOBILE` and `OBJECT|objectid^eggmobile` will both also spawn an Egg Mobile.
 
 
 ### BADNIK|[username]|[message]|[namecolour]|[scale]
@@ -266,9 +268,11 @@ Spawn the player and follower characters. This changes the follower to the playe
 
 ### SOUND|{sound}
 
-Play a sound given its ID number from. List: https://wiki.srb2.org/wiki/List_of_sounds
+Play a sound given its ID number or case insensitive name, with or without the sfx_ prefix.
 
-Example: `SOUND|sound^21` will play the player skidding sound
+ID number from. List: https://wiki.srb2.org/wiki/List_of_sounds
+
+Example: `SOUND|sound^21`, `SOUND|sound^sfx_skid` or `SOUND|sound^SKID` will play all the player skidding sound
 
 
 ### MUSIC|{track}
