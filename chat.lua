@@ -547,7 +547,7 @@ local process_command = function (command_string)
 			local object_name = command.objectid
 			if object_name ~= nil then
 				object_name = $1:upper()
-				if #object_name > 3 and object_name:sub(1,3) ~= "MT_" then
+				if #object_name < 3 or object_name:sub(1,3) ~= "MT_" then
 					object_name = "MT_" .. $1
 				end
 				objectId = _G[object_name]
@@ -806,7 +806,7 @@ local process_command = function (command_string)
 			local sound_name = command.sound
 			if sound_name ~= nil then
 				sound_name = $1:lower()
-				if #sound_name > 4 and sound_name:sub(1,4) ~= "sfx_" then
+				if #sound_name < 4 or sound_name:sub(1,4) ~= "sfx_" then
 					sound_name = "sfx_" .. $1
 				end
 				sound = _G[sound_name]
