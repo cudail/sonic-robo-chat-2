@@ -52,13 +52,13 @@ The `spawn_radius` is the radius within which spawned objects will appear. Decre
 
 The `spawn_safety` defines a radius around the player that if an object attempts to spawn within the command will fail. If this happens the command will get re-added to the end of the queue.
 
-The `chat_x_pos` and `chat_y_pos` are the co-ordinates for where the chat for the `CHAT` command will be achored on screen.
+The `chat_x_pos` and `chat_y_pos` are the co-ordinates for where the chat for the `CHAT` command will be anchored on screen.
 
 The `chat_width` is the max width in pixels (not characters) for the chat display.
 
 The `chat_lines` is the max number of lines to display for the chat. If the last message is longer than one line it will overflow this a little.
 
-The `chat_timeout` is how long a given message will be diplayed on screen.
+The `chat_timeout` is how long a given message will be displayed on screen.
 
 The `log` controls debug logging for the mod. The default value of `0` will result in no logging. `1` will log to the in-game console. `2` will log to `luafiles/chat_log.txt`.
 
