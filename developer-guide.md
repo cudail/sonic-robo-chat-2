@@ -15,7 +15,7 @@ The Lua IO library that SRB2 exposes is very limited and cannot put a lock on a 
 
 # Input sanitisation
 
-There is no way to escape pipes or linebreaks for the command parser so any `|`, `^`, `\n` and `\r` characterts should be stripped from all user input.
+There is no way to escape pipes or linebreaks for the command parser so any `|`, `^`, `\n` and `\r` characters should be stripped from all user input.
 
 SRB2 can only display ASCII characters. Trying to display non-ASCII characters may have unexpected results. It will probably just result in messed up looking strings or nothing displaying at all, but it might be a good idea to strip all non-ASCII input anyway when writing to the command file.
 
@@ -49,13 +49,13 @@ The `spawn_radius` is the radius within which spawned objects will appear. Decre
 
 The `spawn_safety` defines a radius around the player that if an object attempts to spawn within the command will fail. If this happens the command will get re-added to the end of the queue.
 
-The `chat_x_pos` and `chat_y_pos` are the co-ordinates for where the chat for the `CHAT` command will be achored on screen.
+The `chat_x_pos` and `chat_y_pos` are the co-ordinates for where the chat for the `CHAT` command will be anchored on screen.
 
 The `chat_width` is the max width in pixels (not characters) for the chat display.
 
 The `chat_lines` is the max number of lines to display for the chat. If the last message is longer than one line it will overflow this a little.
 
-The `chat_timeout` is how long a given message will be diplayed on screen.
+The `chat_timeout` is how long a given message will be displayed on screen.
 
 The `log` controls debug logging for the mod. The default value of `0` will result in no logging. `1` will log to the in-game console. `2` will log to `luafiles/chat_log.txt`.
 
@@ -63,7 +63,7 @@ The `log` controls debug logging for the mod. The default value of `0` will resu
 
 # Commands
 
-Each command is shown with all possible arguments it can take. Arguments in sqaure brackets are optional while arguments in curly brackets are manditory for a command to work.
+Each command is shown with all possible arguments it can take. Arguments in square brackets are optional while arguments in curly brackets are mandatory for a command to work.
 
 ### CONFIG|{setting}|{value}
 
@@ -84,7 +84,7 @@ Spawned objects are intended to display a chat message from whoever spawned them
 
 Most object spawning commands can also take a `scale` value. This is a decimal that adjusts the size of the object spawned. `1` will be normal sized, `0.5` will be half-sized, `2` will be double-sized, etc. Defaults to normal scale if not specified.
 
-If an object tries to spawn withing distance `spawn_safety` of the player the spawn will fail and the command will be re-added to the end of the queue.
+If an object tries to spawn within distance `spawn_safety` of the player the spawn will fail and the command will be re-added to the end of the queue.
 
 
 ### CHAT|[username]|[message]|[namecolour]
@@ -147,7 +147,7 @@ Spawns a spring directly on top of a player. Springs despawn after one second an
 
 ## Player stats
 
-The following four commands change the player in some way. These can be periminant or temporary depending on if the `duration` argument is used. A perminant change changes the character's base information. If a duration is specified then the change is only for the given amount of time. Duration should be an integer representing the number of gameplay ticks the effect will last for. There are 35 ticks a second. E.g. 5 seconds is 175 ticks. If the stat already has a temporary change applied to it then the change will be added to a queue and take affect when the current change (or any change ahead of it in the queue) is has expired. After all queued changes have equired the stat changes back to its perminant value.
+The following four commands change the player in some way. These can be permanent or temporary depending on if the `duration` argument is used. A permanent change changes the character's base information. If a duration is specified then the change is only for the given amount of time. Duration should be an integer representing the number of gameplay ticks the effect will last for. There are 35 ticks a second. E.g. 5 seconds is 175 ticks. If the stat already has a temporary change applied to it then the change will be added to a queue and take affect when the current change (or any change ahead of it in the queue) is has expired. After all queued changes have expired the stat changes back to its permanent value.
 
 
 ### CHARACTER|[colour]|[character]|[duration]
@@ -256,12 +256,12 @@ If playing a game with a follower character (i.e. after starting a game with Son
 
 ### FOLLOWER|[palette]|[characterName]
 
-Change the follower character. Works the same as the `CHARACTER` command described above but does not take a duration - the effect is always perminant.
+Change the follower character. Works the same as the `CHARACTER` command described above but does not take a duration - the effect is always permanent.
 
 
 ### SWAP
 
-Spawn the player and follower characters. This changes the follower to the player's current character (whether perminant or temporary) and changes the player's perminant character to the follower's characters (so if the player is temporarily changed character it won't affect the player until after that wears off).
+Spawn the player and follower characters. This changes the follower to the player's current character (whether permanent or temporary) and changes the player's permanent character to the follower's characters (so if the player is temporarily changed character it won't affect the player until after that wears off).
 
 
 ## Audio commands
@@ -277,7 +277,7 @@ Example: `SOUND|sound^21`, `SOUND|sound^sfx_skid` or `SOUND|sound^SKID` will pla
 
 ### MUSIC|{track}
 
-Play the given music track. The normal stage music will resume from where it left off after the track has finished playing. If an invalid name is passed in then it will cut off the normal stage music momnetarily before it resumes.
+Play the given music track. The normal stage music will resume from where it left off after the track has finished playing. If an invalid name is passed in then it will cut off the normal stage music momentarily before it resumes.
 
 List of music: https://wiki.srb2.org/wiki/List_of_music
 
