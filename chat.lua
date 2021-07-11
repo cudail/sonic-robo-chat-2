@@ -1168,7 +1168,7 @@ addHook("MapLoad", function(mapnum)
 	local player = players[0]
 	if oldmap == gamemap then
 		for i, s in pairs(spawned_list) do
-			if R_PointToDist2(player.mo.x, player.mo.y, s.x, s.y) > chat_config.spawn_safety*FRACUNIT then
+			if R_PointToDist2(player.mo.x, player.mo.y, s.x, s.y) > chat_config.spawn_safety*FRACUNIT and s.health > 0 then
 				s.object = P_SpawnMobj(s.x, s.y, s.z, s.id)
 				s.object.scale = s.scale
 				s.object.angle = FixedAngle(P_RandomRange(0,359)*FRACUNIT)
