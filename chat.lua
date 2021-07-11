@@ -1097,8 +1097,8 @@ end, "game")
 hud.add( function(v, player, camera)
 	local first_person = not camera.chase
 	local cam = first_person and player.mo or camera
-	local hudwidth = 320*FRACUNIT
-	local hudheight = (320*v.height()/v.width())*FRACUNIT
+	local hudwidth = FRACUNIT*v.width()/v.dupx()
+	local hudheight = FRACUNIT*v.height()/v.dupy()
 
 	local fov = ANGLE_90 -- Can this be fetched live instead of assumed?
 
