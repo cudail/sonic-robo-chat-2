@@ -1100,7 +1100,7 @@ hud.add( function(v, player, camera)
 	local hudwidth = FRACUNIT*v.width()/v.dupx()
 	local hudheight = FRACUNIT*v.height()/v.dupy()
 
-	local fov = ANGLE_90 -- Can this be fetched live instead of assumed?
+	local fov = FixedAngle(CV_FindVar("fov").value)
 
 	local distance = FixedDiv(hudwidth / 2, tan(fov/2)) -- the "distance" the HUD plane is projected from the player
 
