@@ -36,10 +36,6 @@ local control_reverse_timer = 0
 local force_jump_timer = 0
 local poison_timer = 0
 
-local defaultmapmusic = nil
-local track_playing = false
-local track_playing_timer = 0
-local normal_music_position = 0
 local changing_map = false
 
 ---------------
@@ -819,14 +815,8 @@ local process_command = function (command_string)
 
 	--MUSIC
 	elseif command.name == "MUSIC" then
-		local track = command.track
-		if track then
-			normal_music_position = S_GetMusicPosition()
-			defaultmapmusic = mapmusname
-			mapmusname = track
-			P_RestoreMusic(player)
-			track_playing = true
-			track_playing_timer = 10
+		if command.track then
+			S_ChangeMusic(command.track)
 		end
 
 	--CONFIG
@@ -920,15 +910,6 @@ addHook("PreThinkFrame", function()
 			speed = { base = FRACUNIT, current = FRACUNIT, timer = 0, queue = {}, update = apply_speed },
 			jump = { base = FRACUNIT, current = FRACUNIT, timer = 0, queue = {}, update = apply_jump }
 		}
-	end
-
-	if track_playing_timer > 0 then
-		track_playing_timer = $1 - 1
-	elseif track_playing and S_GetMusicPosition() == 0 then
-		mapmusname = defaultmapmusic
-		track_playing = false
-		P_RestoreMusic(player)
-		S_SetMusicPosition(normal_music_position)
 	end
 
 	if chat_config.stat_print_delay > -1 and (chat_config.stat_print_delay == 0 or leveltime % chat_config.stat_print_delay == 0) then
