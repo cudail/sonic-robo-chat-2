@@ -30,6 +30,7 @@ parser_interval 35
 spawn_distance 300
 spawn_radius 200
 spawn_safety 30
+object_respawn 1
 stat_print_delay 35
 chat_x_pos 1
 chat_y_pos 54
@@ -48,6 +49,8 @@ The `spawn_distance` is how far in front of the player spawned objects like badn
 The `spawn_radius` is the radius within which spawned objects will appear. Decrease this to make things spawn clustered closer together. Increase it to spread them out.
 
 The `spawn_safety` defines a radius around the player that if an object attempts to spawn within the command will fail. If this happens the command will get re-added to the end of the queue.
+
+The `object_respawn` determines if existing spawned objects should respawn when the player dies and restarts from a checkpoint. If set to `0` objects will not respawn with the player. If set to `1`, the default value, objects will respawn with the health they had when the player died. If set to `2` objects will respawn with full health.
 
 The `chat_x_pos` and `chat_y_pos` are the co-ordinates for where the chat for the `CHAT` command will be anchored on screen.
 
